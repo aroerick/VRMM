@@ -23,6 +23,7 @@ namespace VRMM
             int _hapticHandIndex,
             string[] _hapticIntensityOptions,
             int _hapticIntensityIndex,
+            string _selectionButton,
             Object _handAttachPoint,
             bool _buttonsMatch,
             Color _sharedButtonColor,
@@ -60,6 +61,33 @@ namespace VRMM
             cursor.hapticHandOption = _hapticHandOptions[_hapticHandIndex];
             cursor.hapticIntensityOption = _hapticIntensityOptions[_hapticIntensityIndex];
             cursor.highlightMat = _buttonHighlightMat;
+            switch (_selectionButton)
+            {
+                case "Left Trigger":
+                    cursor.selectButton = "VRMM_Trigger_Left";
+                    break; 
+                case "Right Trigger":
+                    cursor.selectButton = "VRMM_Trigger_Right";
+                    break;      
+                case "Left Thumb Press":
+                    cursor.selectButton = "VRMM_ThumbPress_Left";
+                    break;  
+                case "Right Thumb Press":
+                    cursor.selectButton = "VRMM_ThumbPress_Right";
+                    break; 
+                case "A Button (Oculus Only)":
+                    cursor.selectButton = "VRMM_OculusButton_A";
+                    break; 
+                case "B Button (Oculus Only)":
+                    cursor.selectButton = "VRMM_OculusButton_B";
+                    break; 
+                case "X Button (Oculus Only)":
+                    cursor.selectButton = "VRMM_OculusButton_X";
+                    break; 
+                case"Y Button (Oculus Only)":
+                    cursor.selectButton = "VRMM_OculusButton_Y";
+                    break;  
+            }
 
             //Attach menu to specified attach point
             var handAttach = radialMenuClone.GetComponent<AttachToHand>();

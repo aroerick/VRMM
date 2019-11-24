@@ -8,19 +8,17 @@ namespace VRMM {
     public class MenuCursor : MonoBehaviour
     {
         [HideInInspector]
-        public Material highlightMat;
-        [HideInInspector]
         public string labelDisplayOption;
         [HideInInspector]
         public string hapticHandOption;
         [HideInInspector]
         public string hapticIntensityOption;
         [HideInInspector]
-        public bool playSound;
-        [HideInInspector]
-        public bool playHaptics;
-        [HideInInspector]
         public string selectButton;
+
+        public Material highlightMat;
+        public bool playSound;
+        public bool playHaptics;
 
         private RadialButton[] radialButtons;
         private Material defaultMat;
@@ -64,7 +62,7 @@ namespace VRMM {
 
             if (button != null)
             {
-                if (Input.GetButtonDown(selectButton))
+                if (Input.GetButtonDown(selectButton) || Input.GetAxis(selectButton) > 0.5)
                 {
                     button.onButtonPress.Invoke();
                     if(clickAudio != null && playSound)

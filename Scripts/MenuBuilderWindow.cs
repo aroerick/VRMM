@@ -143,7 +143,6 @@ namespace VRMM {
                     }
 
                     EditorGUILayout.LabelField("Button " + (i + 1), _buttonHeaderStyle);
-
                     _buttonLabels[i] = EditorGUILayout.TextField("Name", _buttonLabels[i]);
 
                     if (!_buttonsMatch)
@@ -174,6 +173,7 @@ namespace VRMM {
                         _hapticHandIndex,
                         _hapticIntensityOptions,
                         _hapticIntensityIndex,
+                        _selectionButtonOptions[_selectionButtonIndex],
                         _handAttachPoint,
                         _buttonsMatch,
                         _sharedButtonColor,
@@ -186,7 +186,7 @@ namespace VRMM {
                 }
                 catch (Exception e)
                 {
-                    Debug.Log("Error: " + e.Message);
+                    Debug.LogError("Error: " + e.Message);
                 }
             }
             else if(_buttonStyleIndex == 0 && GUILayout.Button("Build Menu"))
