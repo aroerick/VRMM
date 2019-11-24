@@ -21,23 +21,35 @@ namespace VRMM {
         public bool playHaptics;
 
         private RadialButton[] radialButtons;
-        private Material defaultMat;
+        private Material buttonMat = null;
         private OculusHapticsController hapticsController;
         private AudioSource clickAudio;
 
         void Start()
         {
             radialButtons = FindObjectsOfType<RadialButton>();
-            defaultMat = radialButtons[0].GetComponent<Renderer>().material;
             hapticsController = GetComponent<OculusHapticsController>();
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            RadialButton button = other.GetComponentInParent<RadialButton>();
+            buttonMat = null;
+            
+            var button = other.GetComponentInParent<RadialButton>();
 
             if (button != null)
             {
+                var renderer = button.GetComponent<Renderer>();
+                if(renderer != null && buttonMat == null)
+                { 
+                    buttonMat = renderer.material;
+                }
+
+                if(buttonMat != null)
+                {
+                    renderer.material = highlightMat;
+                }
+                
                 if(labelDisplayOption == "Toggle on Hover")
                 {
                     Text buttonText = button.GetComponentInChildren<Text>(true);
@@ -47,7 +59,7 @@ namespace VRMM {
                         buttonText.gameObject.SetActive(true);
                     }
                 }
-                button.gameObject.GetComponent<MeshRenderer>().material = highlightMat;
+
             }
         }
 
@@ -75,10 +87,22 @@ namespace VRMM {
 
         private void OnTriggerExit(Collider other)
         {
-            RadialButton button = other.GetComponentInParent<RadialButton>();
+            var button = other.GetComponentInParent<RadialButton>();
 
             if (button != null)
             {
+                var renderer = button.GetComponent<Renderer>();
+
+                if(renderer != null)
+                {
+                    renderer.material = buttonMat;
+                    
+                    if(renderer.material != highlightMat)
+                    {
+                        buttonMat = null;
+                    }
+                }
+
                 if (labelDisplayOption == "Toggle on Hover")
                 {
                     Text buttonText = button.GetComponentInChildren<Text>(true);
@@ -89,7 +113,6 @@ namespace VRMM {
                     }
                 }
                 
-                button.gameObject.GetComponent<MeshRenderer>().material = defaultMat;
             }
         }
     }

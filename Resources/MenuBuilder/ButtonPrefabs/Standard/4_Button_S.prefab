@@ -1,81 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1645980133553035854
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4843849268849206400}
-  - component: {fileID: 3181714276740465318}
-  m_Layer: 0
-  m_Name: Collider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4843849268849206400
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1645980133553035854}
-  m_LocalRotation: {x: -0, y: -0.29228717, z: -0, w: 0.95633066}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 6778943139928092236}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: -33.99, z: 0}
---- !u!65 &3181714276740465318
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1645980133553035854}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.046638772, y: 0.02, z: 0.02028896}
-  m_Center: {x: -0.0013358396, y: 0, z: -0.07530869}
---- !u!1 &5019104647801109389
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6778943139928092236}
-  m_Layer: 0
-  m_Name: Colliders
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6778943139928092236
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5019104647801109389}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1698087694857405234}
-  - {fileID: 4843849268849206400}
-  m_Father: {fileID: 7974626342350367017}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6408844031254780730
 GameObject:
   m_ObjectHideFlags: 0
@@ -107,8 +31,8 @@ Transform:
   m_LocalPosition: {x: 0.015896259, y: 1.8164983e-18, z: -0.081807815}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 6778943139928092236}
   - {fileID: 3702691578616929738}
+  - {fileID: 1698087694857405234}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -293,13 +217,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8155396048951884484}
-  m_LocalRotation: {x: -0, y: -0.47174272, z: -0, w: 0.8817363}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0.37441546, z: -0, w: 0.92726105}
+  m_LocalPosition: {x: 0.0006, y: 0, z: 0.005}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 6778943139928092236}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -56.295002, z: 0}
+  m_Father: {fileID: 7974626342350367017}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: -43.976, z: 0}
 --- !u!65 &7352490684497558989
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -311,8 +235,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.046638772, y: 0.02, z: 0.02028896}
-  m_Center: {x: -0.0013358396, y: 0, z: -0.07530869}
+  m_Size: {x: 0.070283696, y: 0.02, z: 0.025183871}
+  m_Center: {x: -0.0013357438, y: 0, z: -0.072861135}
 --- !u!1001 &9083464489023593055
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -363,7 +287,7 @@ PrefabInstance:
     - target: {fileID: 5578948989285992341, guid: 85db03c7c137f5a429c0c7eb36f5623b,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5578948989285992341, guid: 85db03c7c137f5a429c0c7eb36f5623b,
         type: 3}

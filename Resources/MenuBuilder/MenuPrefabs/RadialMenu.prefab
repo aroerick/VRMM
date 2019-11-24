@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db7d33f74a6c3f344b46bb8dcf97f3c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  events: []
+  eventList: []
 --- !u!114 &5206376123954081149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,13 +119,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ee18b6a634be69408001b8a8a87c80f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  highlightMat: {fileID: 0}
   labelDisplayOption: 
   hapticHandOption: 
   hapticIntensityOption: 
+  selectButton: 
+  highlightMat: {fileID: 0}
   playSound: 0
   playHaptics: 0
-  selectButton: 
 --- !u!135 &4252353017262632157
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -137,7 +137,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.01
+  m_Radius: 0.005
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &5899854678512559714
 Rigidbody:
