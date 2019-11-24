@@ -44,7 +44,9 @@ namespace VRMM
                 buttonEvents.eventList.Add(new UnityEvent());
             }
 
-            //Find Menu Cursor in instantiated menu and pass on needed 
+            //Find Menu Cursor in instantiated menu and pass on needed variables
+            //TODO: Haptics are currently tied to OVR and thus only work with Oculus
+            //      Get Vive haptics figured out
             var cursor = radialMenuClone.GetComponentInChildren<MenuCursor>();
             cursor.labelDisplayOption = _labelDisplayOptions[_labelDisplayIndex];
             if (_hapticHandOptions[_hapticHandIndex] == "No Haptics")
@@ -59,17 +61,19 @@ namespace VRMM
             cursor.hapticIntensityOption = _hapticIntensityOptions[_hapticIntensityIndex];
             cursor.highlightMat = _buttonHighlightMat;
 
+            //Attach menu to specified attach point
             var handAttach = radialMenuClone.GetComponent<AttachToHand>();
             handAttach.handAttachPoint = _handAttachPoint as GameObject;
 
+            //Create buttons for menu
             for (var i = 0; i < _numberOfButtons; i++)
             {
+                //Create each button as a child of the button container using specific button model
                 var buttonPrefab = _buttonPrefabs[_numberOfButtons - 2];
                 var buttonClone = Instantiate(buttonPrefab, radialMenuClone.GetComponentInChildren<RadialButtonContainer>().transform);
 
                 var renderer = buttonClone.GetComponent<Renderer>();
                 renderer.material = _buttonDefaultMats[i];
-
                 if (_buttonsMatch)
                 {
                     renderer.sharedMaterial.color = _sharedButtonColor;
@@ -79,16 +83,16 @@ namespace VRMM
                     renderer.sharedMaterial.color = _buttonColors[i];
                 }
 
+                //Handle button labels
                 var buttonText = buttonClone.GetComponentInChildren<Text>(true);
                 buttonText.text = _buttonLabels[i];
-
                 if (_labelDisplayOptions[_labelDisplayIndex] == "Always Show")
                 {
                     buttonText.gameObject.SetActive(true);
                 }
 
+                //Handle button icons
                 var buttonIcon = buttonClone.GetComponentInChildren<Image>();
-
                 if (_buttonIcons[i] == null)
                 {
                     buttonIcon.color = Color.clear;
@@ -98,10 +102,12 @@ namespace VRMM
                     buttonIcon.sprite = _buttonIcons[i] as Sprite;
                 }
 
+                //Rotate each button to proper spot around center and name GameObject appropriately
                 buttonClone.transform.rotation = Quaternion.Euler(new Vector3(0, ((360 / _numberOfButtons) * i) - ((360 / _numberOfButtons) / 2) - 90, 0));
                 buttonClone.transform.position = Vector3.zero;
-                buttonClone.name = _buttonLabels[i] == null ? "Button " + (i + 1) : _buttonLabels[i];
+                buttonClone.name = _buttonLabels[i] == null ? "Button " + (i + 1) : _buttonLabels[i] + " Button";
 
+                //Check button position and flip label/icon if on bottom half of menu
                 if (buttonText.transform.position.z > 0 || (buttonText.transform.position.z == 0 && buttonText.transform.position.x > 0))
                 {
                     buttonText.transform.Rotate(new Vector3(180, 180, 0));
@@ -111,6 +117,7 @@ namespace VRMM
                     buttonIcon.transform.Rotate(new Vector3(180, 180, 0));
                 }
 
+                //Make sure Audio exists or is disabled
                 var audioSource = buttonClone.GetComponent<AudioSource>();
                 if (_playSoundOnClick)
                 {
