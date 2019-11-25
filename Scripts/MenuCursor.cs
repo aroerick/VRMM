@@ -15,15 +15,18 @@ namespace VRMM {
         public string hapticIntensityOption;
         [HideInInspector]
         public string selectButton;
-
+        [HideInInspector]
         public Material highlightMat;
+        [HideInInspector]
         public bool playSound;
+        [HideInInspector]
+        public AudioSource clickAudio;
+        [HideInInspector]
         public bool playHaptics;
 
         private RadialButton[] radialButtons;
         private Material buttonMat = null;
         private OculusHapticsController hapticsController;
-        private AudioSource clickAudio;
 
         void Start()
         {
@@ -34,7 +37,7 @@ namespace VRMM {
         private void OnTriggerEnter(Collider other)
         {
             buttonMat = null;
-            
+
             var button = other.GetComponentInParent<RadialButton>();
 
             if (button != null)

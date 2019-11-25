@@ -1,4 +1,7 @@
-﻿using System;
+﻿using System.Linq;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
@@ -15,6 +18,13 @@ namespace VRMM {
         private GameObject _radialMenuPrefab;
         private Material[] _buttonDefaultMats;
         private Material _buttonHighlightMat;
+
+        private int _buildOptionsIndex;
+        private string[] _buildOptions = 
+            { "Build New Menu", "Update Existing Menu" };
+        private int _menuUpdateOptionsIndex;
+        private string[] _menuUpdateOptions;
+        private List<RadialMenu> _menusInScene = new List<RadialMenu>();
 
         private int _buttonStyleIndex;
         private readonly string[] _buttonStyleOptions = 
@@ -66,6 +76,25 @@ namespace VRMM {
 
         public void OnGUI()
         {
+            var currentMenus = FindObjectsOfType<RadialMenu>();
+            foreach(RadialMenu menu in currentMenus)
+            {
+                if(!_menusInScene.Contains(menu))
+                {
+                    _menusInScene.Add(menu);
+                }
+            }
+            if(currentMenus.Length > 0)
+            {
+                foreach(RadialMenu menu in _menusInScene.ToList())
+                {
+                    if(!currentMenus.Contains(menu))
+                    {
+                        _menusInScene.Remove(menu);
+                    }
+                }
+            }
+
             _buttonHeaderStyle = new GUIStyle(GUI.skin.label)
             {
                 fontStyle = FontStyle.Bold
@@ -74,6 +103,25 @@ namespace VRMM {
             EditorGUILayout.Space();
 
             EditorGUILayout.LabelField("Radial Menu Options", _buttonHeaderStyle);
+            
+            if(currentMenus.Length > 0 )
+            {
+                _buildOptionsIndex = EditorGUILayout.Popup(_buildOptionsIndex, _buildOptions);
+            }
+            else
+            {
+                _buildOptionsIndex = 0;
+            }
+
+            if(_buildOptionsIndex == 1)
+            {
+                _menuUpdateOptions = new string[_menusInScene.Count];
+                for(var i = 0; i < _menuUpdateOptions.Length; i++)
+                {
+                    _menuUpdateOptions[i] = _menusInScene[i].gameObject.name;
+                }
+                _menuUpdateOptionsIndex = EditorGUILayout.Popup(_menuUpdateOptionsIndex, _menuUpdateOptions);
+            }
 
             GUILine();
 
@@ -158,7 +206,7 @@ namespace VRMM {
             GUILayout.EndScrollView();
 
             //Create menu on press of 'Build Menu' button
-            if (_buttonStyleIndex != 0 && GUILayout.Button("Build Menu"))
+            if (_buttonStyleIndex != 0 && _buildOptionsIndex == 0 && GUILayout.Button("Build Menu"))
             {
                 try{
                     MenuBuilder.BuildMenu(
@@ -167,12 +215,37 @@ namespace VRMM {
                         _buttonPrefabs,
                         _buttonDefaultMats,
                         _numberOfButtons, 
-                        _labelDisplayOptions, 
-                        _labelDisplayIndex, 
-                        _hapticHandOptions,
-                        _hapticHandIndex,
-                        _hapticIntensityOptions,
-                        _hapticIntensityIndex,
+                        _labelDisplayOptions[_labelDisplayIndex],  
+                        _hapticHandOptions[_hapticHandIndex],
+                        _hapticIntensityOptions[_hapticIntensityIndex],
+                        _selectionButtonOptions[_selectionButtonIndex],
+                        _handAttachPoint,
+                        _buttonsMatch,
+                        _sharedButtonColor,
+                        _buttonColors,
+                        _buttonLabels,
+                        _buttonIcons,
+                        _playSoundOnClick,
+                        _onClickSound
+                        );
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Error: " + e.Message);
+                }
+            }
+            else if (_buttonStyleIndex != 0 && _buildOptionsIndex == 1 && GUILayout.Button("Update Menu"))
+            {
+                try{
+                    MenuBuilder.UpdateMenu(
+                        _menusInScene[_menuUpdateOptionsIndex],
+                        _buttonHighlightMat,
+                        _buttonPrefabs,
+                        _buttonDefaultMats,
+                        _numberOfButtons, 
+                        _labelDisplayOptions[_labelDisplayIndex],  
+                        _hapticHandOptions[_hapticHandIndex],
+                        _hapticIntensityOptions[_hapticIntensityIndex],
                         _selectionButtonOptions[_selectionButtonIndex],
                         _handAttachPoint,
                         _buttonsMatch,

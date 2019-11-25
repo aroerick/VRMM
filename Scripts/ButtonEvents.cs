@@ -6,10 +6,10 @@ using VRMM;
 
 public class ButtonEvents : MonoBehaviour
 {
-    // public UnityEvent[] events;
     public List<UnityEvent> eventList;
     
     private RadialButton[] buttons;
+    
     private void Start() {
         buttons = GetComponentsInChildren<RadialButton>();
 
