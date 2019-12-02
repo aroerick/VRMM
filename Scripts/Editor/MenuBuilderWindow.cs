@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System;
+﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -12,7 +12,12 @@ namespace VRMM {
     public class MenuBuilderWindow : EditorWindow
     {
         private Vector2 _scrollPosition;
-        private GUIStyle _buttonHeaderStyle;
+        private GUIStyle _headerStyle;
+        private GUIStyle _foldoutHeaderStyle;
+        private GUILayoutOption[] _popupLayoutOptions;
+        private GUILayoutOption[] _fieldLayoutOptions;
+        private GUILayoutOption[] _sliderLayoutOptions;
+        private GUILayoutOption[] _buttonLayoutOptions;
 
         private GameObject[] _buttonPrefabs;
         private GameObject _radialMenuPrefab;
@@ -76,6 +81,7 @@ namespace VRMM {
 
         public void OnGUI()
         {
+            this.maxSize = new Vector2(300f, 300f);
             var currentMenus = FindObjectsOfType<RadialMenu>();
             foreach(RadialMenu menu in currentMenus)
             {
@@ -95,18 +101,45 @@ namespace VRMM {
                 }
             }
 
-            _buttonHeaderStyle = new GUIStyle(GUI.skin.label)
+            _headerStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontStyle = FontStyle.Bold,
+                clipping = TextClipping.Overflow
+            };
+            _foldoutHeaderStyle = new GUIStyle(EditorStyles.foldout)
             {
                 fontStyle = FontStyle.Bold
+
+
+            };
+            _popupLayoutOptions = new GUILayoutOption[]
+            {
+                GUILayout.MinWidth(300),
+                GUILayout.MaxWidth(500)
+            };
+            _fieldLayoutOptions = new GUILayoutOption[]
+            {
+                GUILayout.MinWidth(300),
+                GUILayout.MaxWidth(500)
+            };
+            _sliderLayoutOptions = new GUILayoutOption[]
+            {
+                GUILayout.MinWidth(300),
+                GUILayout.MaxWidth(500)
+            };
+            _buttonLayoutOptions = new GUILayoutOption[]
+            {
+                GUILayout.MinWidth(300),
+                GUILayout.MaxWidth(500)
             };
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.LabelField("Radial Menu Options", _buttonHeaderStyle);
+            EditorGUILayout.LabelField("Radial Menu Options", _headerStyle);
             
             if(currentMenus.Length > 0 )
             {
-                _buildOptionsIndex = EditorGUILayout.Popup(_buildOptionsIndex, _buildOptions);
+                _buildOptionsIndex = EditorGUILayout.Popup(_buildOptionsIndex, _buildOptions, _popupLayoutOptions);
             }
             else
             {
@@ -120,7 +153,7 @@ namespace VRMM {
                 {
                     _menuUpdateOptions[i] = _menusInScene[i].gameObject.name;
                 }
-                _menuUpdateOptionsIndex = EditorGUILayout.Popup(_menuUpdateOptionsIndex, _menuUpdateOptions);
+                _menuUpdateOptionsIndex = EditorGUILayout.Popup(_menuUpdateOptionsIndex, _menuUpdateOptions, _popupLayoutOptions);
             }
 
             GUILine();
@@ -136,50 +169,50 @@ namespace VRMM {
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
 
             // General Button Options
-            EditorGUILayout.LabelField("General Button Options", _buttonHeaderStyle);
-            _buttonStyleIndex = EditorGUILayout.Popup("Button Style", _buttonStyleIndex, _buttonStyleOptions);
-            _numberOfButtons = EditorGUILayout.IntSlider("Number of Buttons", _numberOfButtons, 2, 8);
-            _labelDisplayIndex = EditorGUILayout.Popup("Button Label Mode", _labelDisplayIndex, _labelDisplayOptions);
+            EditorGUILayout.LabelField("General Button Options", _headerStyle);
+            _buttonStyleIndex = EditorGUILayout.Popup("Button Style", _buttonStyleIndex, _buttonStyleOptions, _popupLayoutOptions);
+            _numberOfButtons = EditorGUILayout.IntSlider("Number of Buttons", _numberOfButtons, 2, 8, _sliderLayoutOptions);
+            _labelDisplayIndex = EditorGUILayout.Popup("Button Label Mode", _labelDisplayIndex, _labelDisplayOptions, _popupLayoutOptions);
 
             GUILine();
 
             //Color Options
-            EditorGUILayout.LabelField("Color Options", _buttonHeaderStyle);
+            EditorGUILayout.LabelField("Color Options", _headerStyle);
             _buttonsMatch = EditorGUILayout.Toggle("All buttons same color", _buttonsMatch);
             if (_buttonsMatch)
             {
-                _sharedButtonColor = EditorGUILayout.ColorField("Button Color", _sharedButtonColor);
+                _sharedButtonColor = EditorGUILayout.ColorField("Button Color", _sharedButtonColor, _fieldLayoutOptions);
             }
-            _sharedHighlightColor = EditorGUILayout.ColorField("Button Hover Color", _sharedHighlightColor);
+            _sharedHighlightColor = EditorGUILayout.ColorField("Button Hover Color", _sharedHighlightColor, _fieldLayoutOptions);
             _buttonHighlightMat.color = _sharedHighlightColor;
 
             GUILine();
 
             //Control Options
-            EditorGUILayout.LabelField("Control Options", _buttonHeaderStyle);
-            _selectionButtonIndex = EditorGUILayout.Popup("Confirm Selection Button", _selectionButtonIndex, _selectionButtonOptions);
+            EditorGUILayout.LabelField("Control Options", _headerStyle);
+            _selectionButtonIndex = EditorGUILayout.Popup("Confirm Selection Button", _selectionButtonIndex, _selectionButtonOptions, _popupLayoutOptions);
 
             GUILine();
 
             //Misc Options
-            EditorGUILayout.LabelField("Misc Options", _buttonHeaderStyle);
-            _handAttachPoint = EditorGUILayout.ObjectField("Menu Hand Attach Point", _handAttachPoint, typeof(GameObject), true);
+            EditorGUILayout.LabelField("Misc Options", _headerStyle);
+            _handAttachPoint = EditorGUILayout.ObjectField("Menu Hand Attach Point", _handAttachPoint, typeof(GameObject), true, _fieldLayoutOptions);
             _playSoundOnClick = EditorGUILayout.Toggle("Play Sound on Click", _playSoundOnClick);
             if (_playSoundOnClick)
             {
-                _onClickSound = EditorGUILayout.ObjectField("Sound on Click", _onClickSound, typeof(AudioClip), true);
+                _onClickSound = EditorGUILayout.ObjectField("Sound on Click", _onClickSound, typeof(AudioClip), true, _fieldLayoutOptions);
             }
             _onClickSound = _defaultClickSound;
-            _hapticHandIndex = EditorGUILayout.Popup("Haptics", _hapticHandIndex, _hapticHandOptions);
+            _hapticHandIndex = EditorGUILayout.Popup("Haptics", _hapticHandIndex, _hapticHandOptions, _popupLayoutOptions);
             if (_hapticHandOptions[_hapticHandIndex] != "No Haptics")
             {
-                _hapticIntensityIndex = EditorGUILayout.Popup("Haptic Intensity", _hapticIntensityIndex, _hapticIntensityOptions);
+                _hapticIntensityIndex = EditorGUILayout.Popup("Haptic Intensity", _hapticIntensityIndex, _hapticIntensityOptions, _popupLayoutOptions);
             }
 
             GUILine();
 
             //Individual Button Options
-            _showButtonOptions = EditorGUILayout.Foldout(_showButtonOptions, "Individual Button Options", true);
+            _showButtonOptions = EditorGUILayout.Foldout(_showButtonOptions, "Individual Button Options", true, _foldoutHeaderStyle);
             if (_showButtonOptions)
             {
 
@@ -190,14 +223,14 @@ namespace VRMM {
                         EditorGUILayout.Space();
                     }
 
-                    EditorGUILayout.LabelField("Button " + (i + 1), _buttonHeaderStyle);
-                    _buttonLabels[i] = EditorGUILayout.TextField("Name", _buttonLabels[i]);
+                    EditorGUILayout.LabelField("Button " + (i + 1), _headerStyle);
+                    _buttonLabels[i] = EditorGUILayout.TextField("Name", _buttonLabels[i], _fieldLayoutOptions);
 
                     if (!_buttonsMatch)
                     {
-                        _buttonColors[i] = EditorGUILayout.ColorField("Button Color", _buttonColors[i]);
+                        _buttonColors[i] = EditorGUILayout.ColorField("Button Color", _buttonColors[i], _fieldLayoutOptions);
                     }
-                    _buttonIcons[i] = EditorGUILayout.ObjectField("Icon", _buttonIcons[i], typeof(Sprite), false);
+                    _buttonIcons[i] = EditorGUILayout.ObjectField("Icon", _buttonIcons[i], typeof(Sprite), false, _fieldLayoutOptions);
 
                     GUILine();
                 }
@@ -206,7 +239,7 @@ namespace VRMM {
             GUILayout.EndScrollView();
 
             //Create menu on press of 'Build Menu' button
-            if (_buttonStyleIndex != 0 && _buildOptionsIndex == 0 && GUILayout.Button("Build Menu"))
+            if (_buttonStyleIndex != 0 && _buildOptionsIndex == 0 && GUILayout.Button("Build Menu", _buttonLayoutOptions))
             {
                 try{
                     MenuBuilder.BuildMenu(
@@ -262,7 +295,7 @@ namespace VRMM {
                     Debug.LogError("Error: " + e.Message);
                 }
             }
-            else if(_buttonStyleIndex == 0 && GUILayout.Button("Build Menu"))
+            else if(_buttonStyleIndex == 0 && GUILayout.Button("Build Menu", _buttonLayoutOptions))
             {
                 Debug.Log("Please select a button style to create your menu!");
             }
@@ -280,6 +313,51 @@ namespace VRMM {
             EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 1));
 
             EditorGUILayout.Space();
+        }
+
+        void DisplayMenuToUpdate(RadialMenu menu)
+        {
+            var menuButtons = menu.GetComponentsInChildren<RadialButton>();
+            var menuCursor = menu.GetComponentInChildren<MenuCursor>();
+
+            _numberOfButtons = menuButtons.Length;
+            _labelDisplayIndex = ArrayUtility.IndexOf(_labelDisplayOptions, menuCursor.labelDisplayOption);
+            for(var i = 0; i < menuButtons.Length; i++)
+            {
+                var rendererOne = menuButtons[i].GetComponent<Renderer>();
+                var currentMatColor = rendererOne.sharedMaterial.color;
+
+                if(i != menuButtons.Length - 1)
+                {
+                    var rendererTwo = menuButtons[i + 1].GetComponent<Renderer>();
+                    var nextMatColor = rendererTwo.sharedMaterial.color;
+
+                    if(currentMatColor != nextMatColor)
+                    {
+                        _buttonsMatch = false;
+                        break;
+                    }
+                }
+                _buttonsMatch = true;
+            }
+            _sharedButtonColor = menuButtons[0].GetComponent<Renderer>().sharedMaterial.color;
+            _sharedHighlightColor = menuCursor.highlightMat.color;
+            // _selectionButtonIndex = ArrayUtility.IndexOf(_selectionButtonOptions, menuCursor.selectButton);
+            _handAttachPoint = menu.GetComponent<AttachToHand>().handAttachPoint;
+            _playSoundOnClick = menuCursor.playSound;
+            if(_playSoundOnClick)
+            {
+                _onClickSound = menuCursor.clickAudio;
+            }
+            _hapticHandIndex = ArrayUtility.IndexOf(_hapticHandOptions, menuCursor.hapticHandOption);
+            if(_hapticHandIndex != 0)
+            {
+                _hapticIntensityIndex = ArrayUtility.IndexOf(_hapticIntensityOptions, menuCursor.hapticIntensityOption);
+            }
+            for(var i = 0; i < menuButtons.Length; i++)
+            {
+
+            }
         }
     }
 

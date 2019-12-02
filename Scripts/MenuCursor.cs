@@ -15,7 +15,7 @@ namespace VRMM {
         public string hapticIntensityOption;
         [HideInInspector]
         public string selectButton;
-        [HideInInspector]
+        // [HideInInspector]
         public Material highlightMat;
         [HideInInspector]
         public bool playSound;
