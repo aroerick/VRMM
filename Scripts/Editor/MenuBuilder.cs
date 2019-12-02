@@ -12,6 +12,7 @@ namespace VRMM
     {
 
         public static void BuildMenu(
+            string _menuName,
             GameObject _radialMenuPrefab,
             Material _buttonHighlightMat,
             GameObject _buttonPrefab,
@@ -35,7 +36,7 @@ namespace VRMM
         {
             //Create new menu
             var radialMenuClone = Instantiate(_radialMenuPrefab);
-            radialMenuClone.name = "RadialMenu";
+            radialMenuClone.name = _menuName == "" ? "RadialMenu" : _menuName;
             radialMenuClone.GetComponent<RadialMenu>().buttonStyle = _buttonStyle;
 
             //Add Unity Event list of proper length
@@ -107,7 +108,7 @@ namespace VRMM
                 //Rotate each button to proper spot around center and name GameObject appropriately
                 buttonClone.transform.rotation = Quaternion.Euler(new Vector3(0, ((360 / _numberOfButtons) * i) - ((360 / _numberOfButtons) / 2) - 90, 0));
                 buttonClone.transform.position = Vector3.zero;
-                buttonClone.name = _buttonLabels[i] == null ? "Button " + (i + 1) : _buttonLabels[i] + " Button";
+                buttonClone.name = _buttonLabels[i] == null ? "Button " + (i + 1) : _buttonLabels[i];
 
                 //Check button position and flip label/icon if on bottom half of menu
                 if (buttonText.transform.position.z > 0 || (buttonText.transform.position.z == 0 && buttonText.transform.position.x > 0))

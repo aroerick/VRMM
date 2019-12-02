@@ -23,7 +23,7 @@ namespace VRMM {
 
         private GameObject[] _buttonPrefabs;
         private GameObject _radialMenuPrefab;
-        private Material[] _buttonDefaultMats;
+        private Material[] _buttonMats;
         private Material _buttonHighlightMat;
 
         private int _buildOptionsIndex;
@@ -33,6 +33,7 @@ namespace VRMM {
         private string[] _menuUpdateOptions;
         private UnityObject _menuUpdateOption;
         private List<RadialMenu> _menusInScene = new List<RadialMenu>();
+        private string _menuName;
 
         private int _buttonStyleIndex;
         private readonly string[] _buttonStyleOptions = 
@@ -159,6 +160,7 @@ namespace VRMM {
             else
             {
                 _buildOptionsIndex = 0;
+                _menuUpdateOption = null;
             }
 
             if(_buildOptionsIndex == 1)
@@ -170,9 +172,13 @@ namespace VRMM {
                 }
                 _menuUpdateOption = EditorGUILayout.ObjectField("Menu to Update", _menuUpdateOption, typeof(RadialMenu), true, _fieldLayoutOptions);
 
-                if(GUILayout.Button("Load Menu", _buttonLayoutOptions))
+                if(_menuUpdateOption != null && GUILayout.Button("Load Menu", _buttonLayoutOptions))
                 {
-                    DisplayMenuToUpdate(_menusInScene[_menuUpdateOptionsIndex]);
+                    DisplayMenuToUpdate((RadialMenu)_menuUpdateOption);
+                }
+                else if(_menuUpdateOption == null && GUILayout.Button("Load Menu", _buttonLayoutOptions))
+                {
+                    Debug.LogError("VRMM: Please Select a Menu to Update.");
                 }
             }
 
@@ -183,7 +189,7 @@ namespace VRMM {
             _radialMenuPrefab = Resources.Load<GameObject>("MenuBuilder/MenuPrefabs/RadialMenu");
             _defaultClickSound = Resources.Load<AudioClip>("MenuBuilder/Sound/DefaultButtonPress");
 
-            _buttonDefaultMats = Resources.LoadAll<Material>("MenuBuilder/Materials/Buttons");
+            // _buttonMats = Resources.LoadAll<Material>("MenuBuilder/Materials/Buttons");
             _buttonHighlightMat = Resources.Load<Material>("MenuBuilder/Materials/Highlight/ButtonHighlight_Mat");
 
 
@@ -191,11 +197,18 @@ namespace VRMM {
 
             // General Button Options
             EditorGUILayout.LabelField("General Button Options", _headerStyle);
+            if(_buildOptionsIndex == 0)
+            {
+                _menuName = EditorGUILayout.TextField("Menu Name", _menuName, _fieldLayoutOptions);
+            }
             _buttonStyleIndex = EditorGUILayout.Popup("Button Style", _buttonStyleIndex, _buttonStyleOptions, _popupLayoutOptions);
             _numberOfButtons = EditorGUILayout.IntSlider("Number of Buttons", _numberOfButtons, 2, 8, _sliderLayoutOptions);
+
+            GUILine();
+
+            EditorGUILayout.LabelField("Label Options", _headerStyle);
             _labelDisplayIndex = EditorGUILayout.Popup("Button Label Mode", _labelDisplayIndex, _labelDisplayOptions, _popupLayoutOptions);
             _labelFont = EditorGUILayout.ObjectField("Label Font", _labelFont, typeof(Font), false, _fieldLayoutOptions);
-            var font = (Font)Resources.Load("Fonts/Rubik-Regular.ttf", typeof(Font));
 
             GUILine();
 
@@ -247,13 +260,13 @@ namespace VRMM {
                     }
 
                     EditorGUILayout.LabelField("Button " + (i + 1), _headerStyle);
-                    _buttonLabels[i] = EditorGUILayout.TextField("Name", _buttonLabels[i], _fieldLayoutOptions);
+                    _buttonLabels[i] = EditorGUILayout.TextField("Button Name", _buttonLabels[i], _fieldLayoutOptions);
 
                     if (!_buttonsMatch)
                     {
                         _buttonColors[i] = EditorGUILayout.ColorField("Button Color", _buttonColors[i], _fieldLayoutOptions);
                     }
-                    _buttonIcons[i] = EditorGUILayout.ObjectField("Icon", _buttonIcons[i], typeof(Sprite), false, _fieldLayoutOptions);
+                    _buttonIcons[i] = EditorGUILayout.ObjectField("Button Icon", _buttonIcons[i], typeof(Sprite), false, _fieldLayoutOptions);
 
                     GUILine();
                 }
@@ -265,12 +278,47 @@ namespace VRMM {
             if (_buttonStyleIndex != 0 && _buildOptionsIndex == 0 && GUILayout.Button("Build Menu", _buttonLayoutOptions))
             {
                 try{
+                    if(_menuName == "")
+                    {
+                        _menuName = "Radial Menu";
+                    }
+                    for(var i = 0; i < _menusInScene.Count; i++)
+                    {
+                        if(_menusInScene[i].name == _menuName)
+                        {
+                            throw new Exception("Please use a unique name for your menu");
+                        }
+                    }
+                    if(!AssetDatabase.IsValidFolder(String.Format("Assets/VRMM/Resources/MenuBuilder/Materials/Buttons/{0}", _menuName)))
+                    {
+                        AssetDatabase.CreateFolder("Assets/VRMM/Resources/MenuBuilder/Materials/Buttons", _menuName);
+                    }
+                    else
+                    {
+                        var data = AssetDatabase.LoadAllAssetsAtPath(String.Format("Assets/VRMM/Resources/MenuBuilder/Materials/Buttons/{0}", _menuName));
+                        foreach(UnityObject datum in data)
+                        {
+                            var path = AssetDatabase.GetAssetPath(datum);
+                            AssetDatabase.DeleteAsset(path);
+                        }
+                    }
+
+                    _buttonMats = new Material[_numberOfButtons];
+
+                    for(var i = 0; i < _numberOfButtons; i++)
+                    {
+                        var mat = new Material(Shader.Find("Standard"));
+                        
+                        AssetDatabase.CreateAsset(mat, String.Format("Assets/VRMM/Resources/MenuBuilder/Materials/Buttons/{0}/Button_{1}_Mat.mat", _menuName, i));
+                        _buttonMats[i] = AssetDatabase.LoadAssetAtPath<Material>(String.Format("Assets/VRMM/Resources/MenuBuilder/Materials/Buttons/{0}/Button_{1}_Mat.mat", _menuName, i));
+                    }
                     MenuBuilder.BuildMenu(
+                        _menuName,
                         _radialMenuPrefab,
                         _buttonHighlightMat,
                         _buttonPrefabs[_numberOfButtons - 2],
                         _buttonStyleOptions[_buttonStyleIndex],
-                        _buttonDefaultMats,
+                        _buttonMats,
                         _numberOfButtons, 
                         _labelDisplayOptions[_labelDisplayIndex],  
                         (Font)_labelFont,
@@ -289,18 +337,42 @@ namespace VRMM {
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError("Error: " + e.Message);
+                    Debug.LogError("VRMM: " + e.Message);
                 }
             }
             else if (_buttonStyleIndex != 0 && _buildOptionsIndex == 1 && GUILayout.Button("Update Menu", _buttonLayoutOptions))
             {
                 try{
+                    if(AssetDatabase.IsValidFolder(String.Format("Assets/VRMM/Resources/MenuBuilder/Materials/Buttons/{0}", _menusInScene[_menuUpdateOptionsIndex].name)))
+                    {
+                        var mats = AssetDatabase.LoadAllAssetsAtPath(String.Format("Assets/VRMM/Resources/MenuBuilder/Materials/Buttons/{0}", _menusInScene[_menuUpdateOptionsIndex].name));
+                        for(var i = mats.Length; i < _numberOfButtons; i++)
+                        {
+                            var mat = new Material(Shader.Find("Standard"));
+                            
+                            AssetDatabase.CreateAsset(mat, String.Format("Assets/VRMM/Resources/MenuBuilder/Materials/Buttons/{0}/Button_{1}_Mat.mat", _menusInScene[_menuUpdateOptionsIndex].name, i));
+                            _buttonMats[i] = AssetDatabase.LoadAssetAtPath<Material>(String.Format("Assets/VRMM/Resources/MenuBuilder/Materials/Buttons/{0}/Button_{1}_Mat.mat", _menuName, i));
+                        }
+                    }
+                    else
+                    {
+                        AssetDatabase.CreateFolder("Assets/VRMM/Resources/MenuBuilder/Materials/Buttons", _menuName);
+
+                    for(var i = 0; i < _numberOfButtons; i++)
+                    {
+                        var mat = new Material(Shader.Find("Standard"));
+                        
+                        AssetDatabase.CreateAsset(mat, String.Format("Assets/VRMM/Resources/MenuBuilder/Materials/Buttons/{0}/Button_{1}_Mat.mat", _menuName, i));
+                        _buttonMats[i] = AssetDatabase.LoadAssetAtPath<Material>(String.Format("Assets/VRMM/Resources/MenuBuilder/Materials/Buttons/{0}/Button_{1}_Mat.mat", _menuName, i));
+                    }
+                    }
+
                     MenuBuilder.UpdateMenu(
                         _menusInScene[_menuUpdateOptionsIndex],
                         _buttonHighlightMat,
                         _buttonPrefabs[_numberOfButtons - 2],
                         _buttonStyleOptions[_buttonStyleIndex],
-                        _buttonDefaultMats,
+                        _buttonMats,
                         _numberOfButtons, 
                         _labelDisplayOptions[_labelDisplayIndex],
                         (Font)_labelFont,  
@@ -319,12 +391,12 @@ namespace VRMM {
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError("Error: " + e.Message);
+                    Debug.LogError("VRMM: " + e.Message);
                 }
             }
             else if(_buttonStyleIndex == 0 && GUILayout.Button("Build Menu", _buttonLayoutOptions))
             {
-                Debug.Log("Please select a button style to create your menu!");
+                Debug.Log("VRMM: Please select a button style to create your menu!");
             }
 
             EditorGUILayout.Space();
@@ -347,6 +419,7 @@ namespace VRMM {
             var menuButtons = menu.GetComponentsInChildren<RadialButton>();
             var menuCursor = menu.GetComponentInChildren<MenuCursor>();
 
+            _menuName = menu.name;
             _buttonStyleIndex = ArrayUtility.IndexOf(_buttonStyleOptions, menu.GetComponent<RadialMenu>().buttonStyle);
             _numberOfButtons = menuButtons.Length;
             _labelDisplayIndex = ArrayUtility.IndexOf(_labelDisplayOptions, menuCursor.labelDisplayOption);
@@ -382,10 +455,16 @@ namespace VRMM {
             {
                 _hapticIntensityIndex = ArrayUtility.IndexOf(_hapticIntensityOptions, menuCursor.hapticIntensityOption);
             }
+            _buttonMats = new Material[menuButtons.Length];
             for(var i = 0; i < menuButtons.Length; i++)
             {
                 _buttonLabels[i] = menuButtons[i].name;
                 _buttonIcons[i] = menuButtons[i].GetComponentInChildren<Image>().sprite;
+                _buttonMats[i] = menuButtons[i].GetComponent<Renderer>().sharedMaterial;
+                if(!_buttonsMatch)
+                {
+                    _buttonColors[i] = _buttonMats[i].color;
+                }
             }
         }
     }
