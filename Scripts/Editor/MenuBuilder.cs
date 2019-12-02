@@ -14,10 +14,12 @@ namespace VRMM
         public static void BuildMenu(
             GameObject _radialMenuPrefab,
             Material _buttonHighlightMat,
-            GameObject[] _buttonPrefabs,
+            GameObject _buttonPrefab,
+            string _buttonStyle,
             Material[] _buttonDefaultMats,
             int _numberOfButtons, 
             string _labelDisplay,
+            Font _labelFont,
             string _hapticHand,
             string _hapticIntensity,
             string _selectionButton,
@@ -34,6 +36,7 @@ namespace VRMM
             //Create new menu
             var radialMenuClone = Instantiate(_radialMenuPrefab);
             radialMenuClone.name = "RadialMenu";
+            radialMenuClone.GetComponent<RadialMenu>().buttonStyle = _buttonStyle;
 
             //Add Unity Event list of proper length
             var buttonEvents = radialMenuClone.GetComponent<ButtonEvents>();
@@ -58,33 +61,7 @@ namespace VRMM
             cursor.hapticHandOption = _hapticHand;
             cursor.hapticIntensityOption = _hapticIntensity;
             cursor.highlightMat = _buttonHighlightMat;
-            switch (_selectionButton)
-            {
-                case "Left Trigger":
-                    cursor.selectButton = "VRMM_Trigger_Left";
-                    break; 
-                case "Right Trigger":
-                    cursor.selectButton = "VRMM_Trigger_Right";
-                    break;      
-                case "Left Thumb Press":
-                    cursor.selectButton = "VRMM_ThumbPress_Left";
-                    break;  
-                case "Right Thumb Press":
-                    cursor.selectButton = "VRMM_ThumbPress_Right";
-                    break; 
-                case "A Button (Oculus Only)":
-                    cursor.selectButton = "VRMM_OculusButton_A";
-                    break; 
-                case "B Button (Oculus Only)":
-                    cursor.selectButton = "VRMM_OculusButton_B";
-                    break; 
-                case "X Button (Oculus Only)":
-                    cursor.selectButton = "VRMM_OculusButton_X";
-                    break; 
-                case"Y Button (Oculus Only)":
-                    cursor.selectButton = "VRMM_OculusButton_Y";
-                    break;  
-            }
+            cursor.selectButtonOption = _selectionButton;
 
             //Attach menu to specified attach point
             var handAttach = radialMenuClone.GetComponent<AttachToHand>();
@@ -94,8 +71,7 @@ namespace VRMM
             for (var i = 0; i < _numberOfButtons; i++)
             {
                 //Create each button as a child of the button container using specific button model
-                var buttonPrefab = _buttonPrefabs[_numberOfButtons - 2];
-                var buttonClone = Instantiate(buttonPrefab, radialMenuClone.GetComponentInChildren<RadialButtonContainer>().transform);
+                var buttonClone = Instantiate(_buttonPrefab, radialMenuClone.GetComponentInChildren<RadialButtonContainer>().transform);
 
                 var renderer = buttonClone.GetComponent<Renderer>();
                 renderer.material = _buttonDefaultMats[i];
@@ -111,6 +87,7 @@ namespace VRMM
                 //Handle button labels
                 var buttonText = buttonClone.GetComponentInChildren<Text>(true);
                 buttonText.text = _buttonLabels[i];
+                buttonText.font = _labelFont;
                 if (_labelDisplay == "Always Show")
                 {
                     buttonText.gameObject.SetActive(true);
@@ -168,10 +145,12 @@ namespace VRMM
         public static void UpdateMenu(
             RadialMenu _currentMenu,
             Material _buttonHighlightMat,
-            GameObject[] _buttonPrefabs,
+            GameObject _buttonPrefab,
+            string _buttonStyle,
             Material[] _buttonDefaultMats,
             int _numberOfButtons, 
             string _labelDisplay,
+            Font _labelFont,
             string _hapticHand,
             string _hapticIntensity,
             string _selectionButton,
@@ -185,6 +164,7 @@ namespace VRMM
             Object _onClickSound
             )
         {
+            _currentMenu.GetComponent<RadialMenu>().buttonStyle = _buttonStyle;
             var currentButtons = _currentMenu.GetComponentsInChildren<RadialButton>();
             for(var i = 0; i < currentButtons.Length; i++)
             {
@@ -222,33 +202,7 @@ namespace VRMM
             cursor.hapticHandOption = _hapticHand;
             cursor.hapticIntensityOption = _hapticIntensity;
             cursor.highlightMat = _buttonHighlightMat;
-            switch (_selectionButton)
-            {
-                case "Left Trigger":
-                    cursor.selectButton = "VRMM_Trigger_Left";
-                    break; 
-                case "Right Trigger":
-                    cursor.selectButton = "VRMM_Trigger_Right";
-                    break;      
-                case "Left Thumb Press":
-                    cursor.selectButton = "VRMM_ThumbPress_Left";
-                    break;  
-                case "Right Thumb Press":
-                    cursor.selectButton = "VRMM_ThumbPress_Right";
-                    break; 
-                case "A Button (Oculus Only)":
-                    cursor.selectButton = "VRMM_OculusButton_A";
-                    break; 
-                case "B Button (Oculus Only)":
-                    cursor.selectButton = "VRMM_OculusButton_B";
-                    break; 
-                case "X Button (Oculus Only)":
-                    cursor.selectButton = "VRMM_OculusButton_X";
-                    break; 
-                case"Y Button (Oculus Only)":
-                    cursor.selectButton = "VRMM_OculusButton_Y";
-                    break;  
-            }
+            cursor.selectButtonOption = _selectionButton;
 
             //Attach menu to specified attach point
             var handAttach = _currentMenu.GetComponent<AttachToHand>();
@@ -259,8 +213,7 @@ namespace VRMM
             for (var i = 0; i < _numberOfButtons; i++)
             {
                 //Create each button as a child of the button container using specific button model
-                var buttonPrefab = _buttonPrefabs[_numberOfButtons - 2];
-                var buttonClone = Instantiate(buttonPrefab, _currentMenu.GetComponentInChildren<RadialButtonContainer>().transform);
+                var buttonClone = Instantiate(_buttonPrefab, _currentMenu.GetComponentInChildren<RadialButtonContainer>().transform);
 
                 var renderer = buttonClone.GetComponent<Renderer>();
                 renderer.material = _buttonDefaultMats[i];
@@ -276,6 +229,7 @@ namespace VRMM
                 //Handle button labels
                 var buttonText = buttonClone.GetComponentInChildren<Text>(true);
                 buttonText.text = _buttonLabels[i];
+                buttonText.font = _labelFont;
                 if (_labelDisplay == "Always Show")
                 {
                     buttonText.gameObject.SetActive(true);
@@ -295,7 +249,7 @@ namespace VRMM
                 //Rotate each button to proper spot around center and name GameObject appropriately
                 buttonClone.transform.rotation = Quaternion.Euler(new Vector3(0, ((360 / _numberOfButtons) * i) - ((360 / _numberOfButtons) / 2) - 90, 0));
                 buttonClone.transform.position = Vector3.zero;
-                buttonClone.name = _buttonLabels[i] == null ? "Button " + (i + 1) : _buttonLabels[i] + " Button";
+                buttonClone.name = _buttonLabels[i] == null ? "Button " + (i + 1) : _buttonLabels[i];
 
                 //Check button position and flip label/icon if on bottom half of menu
                 if (buttonText.transform.position.z > 0 || (buttonText.transform.position.z == 0 && buttonText.transform.position.x > 0))

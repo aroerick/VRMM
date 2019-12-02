@@ -5,6 +5,9 @@ namespace VRMM {
 
     public class RadialMenu : MonoBehaviour
     {
+        [HideInInspector]
+        public string buttonStyle;
+
         private float cursorMod = .08f;
 
         private MenuCursor cursor;

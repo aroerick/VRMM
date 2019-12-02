@@ -14,7 +14,7 @@ namespace VRMM {
         [HideInInspector]
         public string hapticIntensityOption;
         [HideInInspector]
-        public string selectButton;
+        public string selectButtonOption;
         // [HideInInspector]
         public Material highlightMat;
         [HideInInspector]
@@ -24,6 +24,7 @@ namespace VRMM {
         [HideInInspector]
         public bool playHaptics;
 
+        private string selectButton;
         private RadialButton[] radialButtons;
         private Material buttonMat = null;
         private OculusHapticsController hapticsController;
@@ -32,6 +33,37 @@ namespace VRMM {
         {
             radialButtons = FindObjectsOfType<RadialButton>();
             hapticsController = GetComponent<OculusHapticsController>();
+            
+            if(selectButton == null)
+            {
+                switch (selectButtonOption)
+                {
+                    case "Left Trigger":
+                        selectButton = "VRMM_Trigger_Left";
+                        break; 
+                    case "Right Trigger":
+                        selectButton = "VRMM_Trigger_Right";
+                        break;      
+                    case "Left Thumb Press":
+                        selectButton = "VRMM_ThumbPress_Left";
+                        break;  
+                    case "Right Thumb Press":
+                        selectButton = "VRMM_ThumbPress_Right";
+                        break; 
+                    case "A Button (Oculus Only)":
+                        selectButton = "VRMM_OculusButton_A";
+                        break; 
+                    case "B Button (Oculus Only)":
+                        selectButton = "VRMM_OculusButton_B";
+                        break; 
+                    case "X Button (Oculus Only)":
+                        selectButton = "VRMM_OculusButton_X";
+                        break; 
+                    case"Y Button (Oculus Only)":
+                        selectButton = "VRMM_OculusButton_Y";
+                        break;  
+                }
+            }
         }
 
         private void OnTriggerEnter(Collider other)

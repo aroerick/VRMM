@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityObject = UnityEngine.Object;
 using VRMM;
 
@@ -18,6 +19,7 @@ namespace VRMM {
         private GUILayoutOption[] _fieldLayoutOptions;
         private GUILayoutOption[] _sliderLayoutOptions;
         private GUILayoutOption[] _buttonLayoutOptions;
+        private GUILayoutOption[] _radioButtonLayoutOptions;
 
         private GameObject[] _buttonPrefabs;
         private GameObject _radialMenuPrefab;
@@ -29,6 +31,7 @@ namespace VRMM {
             { "Build New Menu", "Update Existing Menu" };
         private int _menuUpdateOptionsIndex;
         private string[] _menuUpdateOptions;
+        private UnityObject _menuUpdateOption;
         private List<RadialMenu> _menusInScene = new List<RadialMenu>();
 
         private int _buttonStyleIndex;
@@ -38,6 +41,8 @@ namespace VRMM {
         private int _labelDisplayIndex;
         private readonly string[] _labelDisplayOptions = 
             { "Toggle on Hover", "Always Show", "None" };
+        private UnityObject _labelFont;
+
 
         private bool _buttonsMatch = true;
         private Color _sharedButtonColor = new Color(0.8f, 0.8f, 0.8f);
@@ -79,9 +84,15 @@ namespace VRMM {
             GetWindow<MenuBuilderWindow>("VR Menu Builder");
         }
 
+        private void OnEnable() 
+        {
+            _labelFont = Resources.Load<Font>("MenuBuilder/Fonts/Rubik-Regular");
+            EditorWindow window = this;
+        }
+
         public void OnGUI()
         {
-            this.maxSize = new Vector2(300f, 300f);
+            this.maxSize = new Vector2(500f, 1000f);
             var currentMenus = FindObjectsOfType<RadialMenu>();
             foreach(RadialMenu menu in currentMenus)
             {
@@ -109,8 +120,6 @@ namespace VRMM {
             _foldoutHeaderStyle = new GUIStyle(EditorStyles.foldout)
             {
                 fontStyle = FontStyle.Bold
-
-
             };
             _popupLayoutOptions = new GUILayoutOption[]
             {
@@ -132,6 +141,11 @@ namespace VRMM {
                 GUILayout.MinWidth(300),
                 GUILayout.MaxWidth(500)
             };
+            _radioButtonLayoutOptions = new GUILayoutOption[]
+            {
+                GUILayout.MinWidth(300),
+                GUILayout.MaxWidth(500)
+            };
 
             EditorGUILayout.Space();
 
@@ -139,7 +153,8 @@ namespace VRMM {
             
             if(currentMenus.Length > 0 )
             {
-                _buildOptionsIndex = EditorGUILayout.Popup(_buildOptionsIndex, _buildOptions, _popupLayoutOptions);
+                _buildOptionsIndex = GUILayout.SelectionGrid(_buildOptionsIndex, new string[]{ "Build New Menu", "Update Existing Menu"}, 2, _buttonLayoutOptions);
+                EditorGUILayout.Space();
             }
             else
             {
@@ -153,7 +168,12 @@ namespace VRMM {
                 {
                     _menuUpdateOptions[i] = _menusInScene[i].gameObject.name;
                 }
-                _menuUpdateOptionsIndex = EditorGUILayout.Popup(_menuUpdateOptionsIndex, _menuUpdateOptions, _popupLayoutOptions);
+                _menuUpdateOption = EditorGUILayout.ObjectField("Menu to Update", _menuUpdateOption, typeof(RadialMenu), true, _fieldLayoutOptions);
+
+                if(GUILayout.Button("Load Menu", _buttonLayoutOptions))
+                {
+                    DisplayMenuToUpdate(_menusInScene[_menuUpdateOptionsIndex]);
+                }
             }
 
             GUILine();
@@ -166,6 +186,7 @@ namespace VRMM {
             _buttonDefaultMats = Resources.LoadAll<Material>("MenuBuilder/Materials/Buttons");
             _buttonHighlightMat = Resources.Load<Material>("MenuBuilder/Materials/Highlight/ButtonHighlight_Mat");
 
+
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
 
             // General Button Options
@@ -173,6 +194,8 @@ namespace VRMM {
             _buttonStyleIndex = EditorGUILayout.Popup("Button Style", _buttonStyleIndex, _buttonStyleOptions, _popupLayoutOptions);
             _numberOfButtons = EditorGUILayout.IntSlider("Number of Buttons", _numberOfButtons, 2, 8, _sliderLayoutOptions);
             _labelDisplayIndex = EditorGUILayout.Popup("Button Label Mode", _labelDisplayIndex, _labelDisplayOptions, _popupLayoutOptions);
+            _labelFont = EditorGUILayout.ObjectField("Label Font", _labelFont, typeof(Font), false, _fieldLayoutOptions);
+            var font = (Font)Resources.Load("Fonts/Rubik-Regular.ttf", typeof(Font));
 
             GUILine();
 
@@ -245,10 +268,12 @@ namespace VRMM {
                     MenuBuilder.BuildMenu(
                         _radialMenuPrefab,
                         _buttonHighlightMat,
-                        _buttonPrefabs,
+                        _buttonPrefabs[_numberOfButtons - 2],
+                        _buttonStyleOptions[_buttonStyleIndex],
                         _buttonDefaultMats,
                         _numberOfButtons, 
                         _labelDisplayOptions[_labelDisplayIndex],  
+                        (Font)_labelFont,
                         _hapticHandOptions[_hapticHandIndex],
                         _hapticIntensityOptions[_hapticIntensityIndex],
                         _selectionButtonOptions[_selectionButtonIndex],
@@ -267,16 +292,18 @@ namespace VRMM {
                     Debug.LogError("Error: " + e.Message);
                 }
             }
-            else if (_buttonStyleIndex != 0 && _buildOptionsIndex == 1 && GUILayout.Button("Update Menu"))
+            else if (_buttonStyleIndex != 0 && _buildOptionsIndex == 1 && GUILayout.Button("Update Menu", _buttonLayoutOptions))
             {
                 try{
                     MenuBuilder.UpdateMenu(
                         _menusInScene[_menuUpdateOptionsIndex],
                         _buttonHighlightMat,
-                        _buttonPrefabs,
+                        _buttonPrefabs[_numberOfButtons - 2],
+                        _buttonStyleOptions[_buttonStyleIndex],
                         _buttonDefaultMats,
                         _numberOfButtons, 
-                        _labelDisplayOptions[_labelDisplayIndex],  
+                        _labelDisplayOptions[_labelDisplayIndex],
+                        (Font)_labelFont,  
                         _hapticHandOptions[_hapticHandIndex],
                         _hapticIntensityOptions[_hapticIntensityIndex],
                         _selectionButtonOptions[_selectionButtonIndex],
@@ -320,6 +347,7 @@ namespace VRMM {
             var menuButtons = menu.GetComponentsInChildren<RadialButton>();
             var menuCursor = menu.GetComponentInChildren<MenuCursor>();
 
+            _buttonStyleIndex = ArrayUtility.IndexOf(_buttonStyleOptions, menu.GetComponent<RadialMenu>().buttonStyle);
             _numberOfButtons = menuButtons.Length;
             _labelDisplayIndex = ArrayUtility.IndexOf(_labelDisplayOptions, menuCursor.labelDisplayOption);
             for(var i = 0; i < menuButtons.Length; i++)
@@ -342,7 +370,7 @@ namespace VRMM {
             }
             _sharedButtonColor = menuButtons[0].GetComponent<Renderer>().sharedMaterial.color;
             _sharedHighlightColor = menuCursor.highlightMat.color;
-            // _selectionButtonIndex = ArrayUtility.IndexOf(_selectionButtonOptions, menuCursor.selectButton);
+            _selectionButtonIndex = ArrayUtility.IndexOf(_selectionButtonOptions, menuCursor.selectButtonOption);
             _handAttachPoint = menu.GetComponent<AttachToHand>().handAttachPoint;
             _playSoundOnClick = menuCursor.playSound;
             if(_playSoundOnClick)
@@ -356,7 +384,8 @@ namespace VRMM {
             }
             for(var i = 0; i < menuButtons.Length; i++)
             {
-
+                _buttonLabels[i] = menuButtons[i].name;
+                _buttonIcons[i] = menuButtons[i].GetComponentInChildren<Image>().sprite;
             }
         }
     }
