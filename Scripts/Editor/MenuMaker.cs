@@ -1,4 +1,13 @@
-﻿using System.Collections;
+﻿// VR Menu Maker V1.3
+// Created by Adam Roerick
+//
+// VRMM is a tool I've created to help empower content creation for VR
+//
+// This class is where the magic happens. It takes all of the input options you selected
+// in the Menu Maker window and builds your VR ready menu. It contains the functions to 
+// build new menus as well as update existing menus already existing in the scene
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -65,8 +74,8 @@ namespace VRMM
             cursor.selectButtonOption = _selectionButton;
 
             //Attach menu to specified attach point
-            var handAttach = radialMenuClone.GetComponent<AttachToHand>();
-            handAttach.handAttachPoint = _handAttachPoint as GameObject;
+            var anchorAttach = radialMenuClone.GetComponent<AttachToAnchor>();
+            anchorAttach.attachPoint = _handAttachPoint as GameObject;
 
             //Create buttons for menu
             for (var i = 0; i < _numberOfButtons; i++)
@@ -212,8 +221,8 @@ namespace VRMM
             cursor.selectButtonOption = _selectionButton;
 
             //Attach menu to specified attach point
-            var handAttach = _currentMenu.GetComponent<AttachToHand>();
-            handAttach.handAttachPoint = _handAttachPoint as GameObject;
+            var handAttach = _currentMenu.GetComponent<AttachToAnchor>();
+            handAttach.attachPoint = _handAttachPoint as GameObject;
 
 
             //Create buttons for menu

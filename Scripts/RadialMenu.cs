@@ -1,5 +1,11 @@
-﻿using UnityEngine;
-using VRMM;
+﻿// VR Menu Maker V1.3
+// Created by Adam Roerick
+//
+// VRMM is a tool I've created to help empower content creation for VR
+//
+// This defines the radial menu object and takes user input to move cursor
+
+using UnityEngine;
 
 namespace VRMM {
 

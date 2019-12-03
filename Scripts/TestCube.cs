@@ -1,4 +1,11 @@
-﻿using UnityEngine;
+﻿// VR Menu Maker V1.3
+// Created by Adam Roerick
+//
+// VRMM is a tool I've created to help empower content creation for VR
+//
+// Just a cube with some pre-built functions to test your menus
+
+using UnityEngine;
 
 public class TestCube : MonoBehaviour
 {
@@ -6,8 +13,6 @@ public class TestCube : MonoBehaviour
 
     private void Start() {
         _mat = GetComponent<Renderer>().sharedMaterial;
-        Debug.Log(Input.GetJoystickNames()[0]);
-        Debug.Log(Input.GetJoystickNames()[1]);
     }
     public void GrowCube(){
         transform.localScale *= 1.05f;

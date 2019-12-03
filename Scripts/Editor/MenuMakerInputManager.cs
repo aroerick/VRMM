@@ -1,4 +1,11 @@
-﻿using System;
+﻿// VR Menu Maker V1.3
+// Created by Adam Roerick
+//
+// VRMM is a tool I've created to help empower content creation for VR
+//
+// This class sets up the needed Unity inputs for the VR menu to function properly
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -20,6 +27,7 @@ namespace VRMM {
             AddInputBindings();
         }
 
+        // Class to describe input bindings
         private class Axis
         {
             public string name = String.Empty;
@@ -39,6 +47,7 @@ namespace VRMM {
             public int joyNum = 0;
         }
 
+        // Create new binding based on input
         private static void NewInputAxis(Axis axis)
         {
             SerializedObject serializedObject = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0]);
@@ -77,6 +86,7 @@ namespace VRMM {
             serializedObject.ApplyModifiedProperties();
         }
 
+        // Create all needed input bindings
         private static void AddInputBindings()
         {
             NewInputAxis(new Axis() { name = "VRMM_Horizontal_Left",    type = 2, dead = 0.1f, axis = 0 });

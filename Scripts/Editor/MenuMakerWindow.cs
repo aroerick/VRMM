@@ -1,4 +1,16 @@
-﻿using System;
+﻿// VR Menu Maker V1.3
+// Created by Adam Roerick
+//
+// VRMM is a tool I've created to help empower content creation for VR
+//
+// This class creates the window that houses the menu builder interface. It creates all the needed variables 
+// to make the menu, has functions to validate the options chosen to build and update your menu, and a
+// function to load the data of an existing menu into the window.
+//
+// This script places a Tools dropdown on your Unity toolbar which houses the VR Menu Maker window
+
+
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,12 +18,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityObject = UnityEngine.Object;
-
-// This class creates the window that houses the menu builder interface. It creates all the needed variables 
-// to make the menu, has functions to validate the options chosen to build and update your menu, and a
-// function to load the data of an existing menu into the window.
-//
-// This script places a Tools dropdown on your Unity toolbar which houses the VR Menu Maker window
 
 namespace VRMM {
 
@@ -380,7 +386,7 @@ namespace VRMM {
             _sharedButtonColor = menuButtons[0].GetComponent<Renderer>().sharedMaterial.color;
             _sharedHighlightColor = menuCursor.highlightMat.color;
             _selectionButtonIndex = ArrayUtility.IndexOf(_selectionButtonOptions, menuCursor.selectButtonOption);
-            _handAttachPoint = menu.GetComponent<AttachToHand>().handAttachPoint;
+            _handAttachPoint = menu.GetComponent<AttachToAnchor>().attachPoint;
             _playSoundOnClick = menuCursor.playSound;
             if(_playSoundOnClick)
             {

@@ -1,7 +1,16 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using VRMM;
+﻿// VR Menu Maker V1.3
+// Created by Adam Roerick
+//
+// VRMM is a tool I've created to help empower content creation for VR
+//
+// This script defines the cursor that is used for button selection in the Radial Menu. A
+// sphere collider is moved based on the axis input to collide with and trigger buttons.
+//
+// Button hover colors, on click sound and haptics, as well as the triggering of button
+// events are all handled from this script.
 
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace VRMM {
 
@@ -66,6 +75,7 @@ namespace VRMM {
             }
         }
 
+        // Update the button material to hover material and toggle label if applicable
         private void OnTriggerEnter(Collider other)
         {
             buttonMat = null;
@@ -98,6 +108,7 @@ namespace VRMM {
             }
         }
 
+        // Handle button press
         private void OnTriggerStay(Collider other)
         {
             RadialButton button = other.GetComponentInParent<RadialButton>();
@@ -120,6 +131,7 @@ namespace VRMM {
             }
         }
 
+        // Change material back to default and toggle label if applicable
         private void OnTriggerExit(Collider other)
         {
             var button = other.GetComponentInParent<RadialButton>();
