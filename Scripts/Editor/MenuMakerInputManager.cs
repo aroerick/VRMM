@@ -7,10 +7,10 @@ using UnityEngine;
 namespace VRMM {
 
     [InitializeOnLoad]
-    class MenuBuilderInputManager
+    class MenuMakerInputManager
     {   
         //Used to create custom input bindings when loaded
-        static MenuBuilderInputManager()
+        static MenuMakerInputManager()
         {
             EditorApplication.delayCall += OnDelayCall;
         }

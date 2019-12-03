@@ -8,10 +8,10 @@ using VRMM;
 namespace VRMM
 {
 
-    public class MenuBuilder : MonoBehaviour
+    public class MenuMaker : MonoBehaviour
     {
 
-        public static void BuildMenu(
+        public static void MakeMenu(
             string _menuName,
             GameObject _radialMenuPrefab,
             Material _buttonHighlightMat,
@@ -88,7 +88,13 @@ namespace VRMM
                 //Handle button labels
                 var buttonText = buttonClone.GetComponentInChildren<Text>(true);
                 buttonText.text = _buttonLabels[i];
+                if(_labelFont == null)
+                {
+                    var defaultFont = Resources.Load<Font>("Fonts/Rubik-Regular");
+                    _labelFont = defaultFont;
+                }
                 buttonText.font = _labelFont;
+
                 if (_labelDisplay == "Always Show")
                 {
                     buttonText.gameObject.SetActive(true);
@@ -249,7 +255,7 @@ namespace VRMM
 
                 //Rotate each button to proper spot around center and name GameObject appropriately
                 buttonClone.transform.rotation = Quaternion.Euler(new Vector3(0, ((360 / _numberOfButtons) * i) - ((360 / _numberOfButtons) / 2) - 90, 0));
-                buttonClone.transform.position = Vector3.zero;
+                buttonClone.transform.localPosition = Vector3.zero;
                 buttonClone.name = _buttonLabels[i] == null ? "Button " + (i + 1) : _buttonLabels[i];
 
                 //Check button position and flip label/icon if on bottom half of menu
