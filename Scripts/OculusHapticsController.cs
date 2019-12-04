@@ -9,14 +9,6 @@ using UnityEngine;
 
 namespace VRMM {
 
-	// Define levels of vibration
-	public enum VibrationForce
-	{
-		Light,
-		Medium,
-		Hard,
-	}
-
 	public class OculusHapticsController : MonoBehaviour
 	{
 		OVRInput.Controller controllerMask;
@@ -51,14 +43,14 @@ namespace VRMM {
 		}
 
 		// Send haptic impulse
-		public void Vibrate(string vibrationForce, string hapticsHand)
+		public void Vibrate(e_hapticIntensity vibrationForce, e_hapticHand hapticsHand)
 		{
 			switch(hapticsHand)
 			{
-					case "Left":
+					case e_hapticHand.LeftController:
 						channel = OVRHaptics.LeftChannel;
 						break;
-					case "Right":
+					case e_hapticHand.RightController:
 						channel = OVRHaptics.RightChannel;
 						break;
 					
@@ -66,13 +58,13 @@ namespace VRMM {
 
 			switch (vibrationForce)
 			{
-				case "Light":
+				case e_hapticIntensity.Light:
 					channel.Preempt(clipLight);
 					break;
-				case "Medium":
+				case e_hapticIntensity.Medium:
 					channel.Preempt(clipMedium);
 					break;
-				case "Hard":
+				case e_hapticIntensity.Strong:
 					channel.Preempt(clipHard);
 					break;
 			}

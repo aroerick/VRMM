@@ -25,14 +25,14 @@ namespace VRMM
             GameObject _radialMenuPrefab,
             Material _buttonHighlightMat,
             GameObject _buttonPrefab,
-            string _buttonStyle,
+            e_buttonStyles _buttonStyle,
             Material[] _buttonDefaultMats,
             int _numberOfButtons, 
-            string _labelDisplay,
+            e_labelDisplay _labelDisplay,
             Font _labelFont,
-            string _hapticHand,
-            string _hapticIntensity,
-            string _selectionButton,
+            e_hapticHand _hapticHand,
+            e_hapticIntensity _hapticIntensity,
+            e_selectionButton _selectionButton,
             Object _handAttachPoint,
             bool _buttonsMatch,
             Color _sharedButtonColor,
@@ -46,7 +46,7 @@ namespace VRMM
             //Create new menu
             var radialMenuClone = Instantiate(_radialMenuPrefab);
             radialMenuClone.name = _menuName == "" ? "RadialMenu" : _menuName;
-            radialMenuClone.GetComponent<RadialMenu>().buttonStyle = _buttonStyle;
+            radialMenuClone.GetComponent<RadialMenu>().buttonStyle = _buttonStyle.ToString();
 
             //Add Unity Event list of proper length
             var buttonEvents = radialMenuClone.GetComponent<ButtonEvents>();
@@ -60,7 +60,7 @@ namespace VRMM
             //      Get Vive haptics figured out
             var cursor = radialMenuClone.GetComponentInChildren<MenuCursor>();
             cursor.labelDisplayOption = _labelDisplay;
-            if (_hapticHand == "No Haptics")
+            if (_hapticHand == e_hapticHand.NoHaptics)
             {
                 cursor.playHaptics = false;
             }
@@ -71,7 +71,7 @@ namespace VRMM
             cursor.hapticHandOption = _hapticHand;
             cursor.hapticIntensityOption = _hapticIntensity;
             cursor.highlightMat = _buttonHighlightMat;
-            cursor.selectButtonOption = _selectionButton;
+            cursor.selectionButton = _selectionButton;
 
             //Attach menu to specified attach point
             var anchorAttach = radialMenuClone.GetComponent<AttachToAnchor>();
@@ -104,7 +104,7 @@ namespace VRMM
                 }
                 buttonText.font = _labelFont;
 
-                if (_labelDisplay == "Always Show")
+                if (_labelDisplay == e_labelDisplay.AlwaysShow)
                 {
                     buttonText.gameObject.SetActive(true);
                 }
@@ -162,14 +162,14 @@ namespace VRMM
             RadialMenu _currentMenu,
             Material _buttonHighlightMat,
             GameObject _buttonPrefab,
-            string _buttonStyle,
+            e_buttonStyles _buttonStyle,
             Material[] _buttonDefaultMats,
             int _numberOfButtons, 
-            string _labelDisplay,
+            e_labelDisplay _labelDisplay,
             Font _labelFont,
-            string _hapticHand,
-            string _hapticIntensity,
-            string _selectionButton,
+            e_hapticHand _hapticHand,
+            e_hapticIntensity _hapticIntensity,
+            e_selectionButton _selectionButton,
             Object _handAttachPoint,
             bool _buttonsMatch,
             Color _sharedButtonColor,
@@ -180,7 +180,7 @@ namespace VRMM
             Object _onClickSound
             )
         {
-            _currentMenu.GetComponent<RadialMenu>().buttonStyle = _buttonStyle;
+            _currentMenu.GetComponent<RadialMenu>().buttonStyle = _buttonStyle.ToString();
             var currentButtons = _currentMenu.GetComponentsInChildren<RadialButton>();
             for(var i = 0; i < currentButtons.Length; i++)
             {
@@ -207,7 +207,7 @@ namespace VRMM
             //      Get Vive haptics figured out
             var cursor = _currentMenu.GetComponentInChildren<MenuCursor>();
             cursor.labelDisplayOption = _labelDisplay;
-            if (_hapticHand == "No Haptics")
+            if (_hapticHand == e_hapticHand.NoHaptics)
             {
                 cursor.playHaptics = false;
             }
@@ -218,7 +218,7 @@ namespace VRMM
             cursor.hapticHandOption = _hapticHand;
             cursor.hapticIntensityOption = _hapticIntensity;
             cursor.highlightMat = _buttonHighlightMat;
-            cursor.selectButtonOption = _selectionButton;
+            cursor.selectionButton = _selectionButton;
 
             //Attach menu to specified attach point
             var handAttach = _currentMenu.GetComponent<AttachToAnchor>();
@@ -246,7 +246,7 @@ namespace VRMM
                 var buttonText = buttonClone.GetComponentInChildren<Text>(true);
                 buttonText.text = _buttonLabels[i];
                 buttonText.font = _labelFont;
-                if (_labelDisplay == "Always Show")
+                if (_labelDisplay == e_labelDisplay.AlwaysShow)
                 {
                     buttonText.gameObject.SetActive(true);
                 }

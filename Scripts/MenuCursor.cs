@@ -16,21 +16,13 @@ namespace VRMM {
 
     public class MenuCursor : MonoBehaviour
     {
-        [HideInInspector]
-        public string labelDisplayOption;
-        [HideInInspector]
-        public string hapticHandOption;
-        [HideInInspector]
-        public string hapticIntensityOption;
-        [HideInInspector]
-        public string selectButtonOption;
-        // [HideInInspector]
+        public e_labelDisplay labelDisplayOption;
+        public e_hapticHand hapticHandOption;
+        public e_hapticIntensity hapticIntensityOption;
+        public e_selectionButton selectionButton;
         public Material highlightMat;
-        [HideInInspector]
         public bool playSound;
-        [HideInInspector]
         public AudioSource clickAudio;
-        [HideInInspector]
         public bool playHaptics;
 
         private string selectButton;
@@ -45,30 +37,30 @@ namespace VRMM {
             
             if(selectButton == null)
             {
-                switch (selectButtonOption)
+                switch (selectionButton)
                 {
-                    case "Left Trigger":
+                    case e_selectionButton.LeftTrigger:
                         selectButton = "VRMM_Trigger_Left";
                         break; 
-                    case "Right Trigger":
+                    case e_selectionButton.RightTrigger:
                         selectButton = "VRMM_Trigger_Right";
                         break;      
-                    case "Left Thumb Press":
+                    case e_selectionButton.LeftThumbPress:
                         selectButton = "VRMM_ThumbPress_Left";
                         break;  
-                    case "Right Thumb Press":
+                    case e_selectionButton.RightThumbPress:
                         selectButton = "VRMM_ThumbPress_Right";
                         break; 
-                    case "A Button (Oculus Only)":
+                    case e_selectionButton.AButtonOculusOnly:
                         selectButton = "VRMM_OculusButton_A";
                         break; 
-                    case "B Button (Oculus Only)":
+                    case e_selectionButton.BButtonOculusOnly:
                         selectButton = "VRMM_OculusButton_B";
                         break; 
-                    case "X Button (Oculus Only)":
+                    case e_selectionButton.XButtonOculusOnly:
                         selectButton = "VRMM_OculusButton_X";
                         break; 
-                    case"Y Button (Oculus Only)":
+                    case e_selectionButton.YButtonOculusOnly:
                         selectButton = "VRMM_OculusButton_Y";
                         break;  
                 }
@@ -95,7 +87,7 @@ namespace VRMM {
                     renderer.material = highlightMat;
                 }
                 
-                if(labelDisplayOption == "Toggle on Hover")
+                if(labelDisplayOption == e_labelDisplay.TaggleOnHover)
                 {
                     Text buttonText = button.GetComponentInChildren<Text>(true);
 
@@ -150,7 +142,7 @@ namespace VRMM {
                     }
                 }
 
-                if (labelDisplayOption == "Toggle on Hover")
+                if (labelDisplayOption == e_labelDisplay.TaggleOnHover)
                 {
                     Text buttonText = button.GetComponentInChildren<Text>(true);
 

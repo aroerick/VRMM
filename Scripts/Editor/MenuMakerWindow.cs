@@ -21,7 +21,6 @@ using UnityObject = UnityEngine.Object;
 
 namespace VRMM {
 
-
     public class MenuMakerWindow : EditorWindow
     {
         private Vector2 _scrollPosition;
@@ -34,52 +33,31 @@ namespace VRMM {
         private Material[] _buttonMats;
         private Material _buttonHighlightMat;
 
-        private int _buildOptionsIndex;
-        private string[] _buildOptions = 
-            { "Build New Menu", "Update Existing Menu" };
+        private e_buildOptions _buildOption;
         private int _menuUpdateOptionsIndex;
         private string[] _menuUpdateOptions;
         private UnityObject _menuUpdateOption;
         private List<RadialMenu> _menusInScene = new List<RadialMenu>();
+
         private string _menuName;
-
-        private int _buttonStyleIndex;
-        private readonly string[] _buttonStyleOptions = 
-            { "Choose...", "Standard", "LowPoly" };
+        private e_buttonStyles _buttonStyle; 
         private int _numberOfButtons;
-        private int _labelDisplayIndex;
-        private readonly string[] _labelDisplayOptions = 
-            { "Toggle on Hover", "Always Show", "None" };
-        private UnityObject _labelFont;
 
+        private e_labelDisplay _labelDisplay;
+        private UnityObject _labelFont;
 
         private bool _buttonsMatch = true;
         private Color _sharedButtonColor = new Color(0.8f, 0.8f, 0.8f);
         private Color _sharedHighlightColor = new Color(0.58f, 0.29f, 0.75f);
 
-        private int _selectionButtonIndex;
-        private readonly string[] _selectionButtonOptions = 
-            { 
-                "Left Trigger", 
-                "Right Trigger", 
-                "Left Thumb Press", 
-                "Right Thumb Press", 
-                "A Button (Oculus Only)", 
-                "B Button (Oculus Only)", 
-                "X Button (Oculus Only)", 
-                "Y Button (Oculus Only)" 
-            };
+        private e_selectionButton _selectionButton;
 
         private UnityObject _handAttachPoint;
         private bool _playSoundOnClick;
         private UnityObject _onClickSound;
         private AudioClip _defaultClickSound;
-        private int _hapticHandIndex;
-        private readonly string[] _hapticHandOptions = 
-            { "No Haptics", "Left", "Right" };
-        private int _hapticIntensityIndex;
-        private readonly string[] _hapticIntensityOptions = 
-            { "Light", "Medium", "Hard" };
+        private e_hapticHand _hapticHand;
+        private e_hapticIntensity _hapticIntensity;
 
         private bool _showButtonOptions;
         private readonly string[] _buttonLabels = new string[8];
@@ -97,6 +75,7 @@ namespace VRMM {
         {
             _labelFont = Resources.Load<Font>("Fonts/Rubik-Regular");
             EditorWindow window = this;
+            _menuName = "My Custom Menu";
         }
 
         public void OnGUI()
@@ -142,17 +121,17 @@ namespace VRMM {
             
             if(currentMenus.Length > 0 )
             {
-                _buildOptionsIndex = GUILayout.SelectionGrid(_buildOptionsIndex, new string[]{ "Build New Menu", "Update Existing Menu"}, 2, _layoutOptions);
+                _buildOption = (e_buildOptions)GUILayout.SelectionGrid((int)_buildOption, new string[2]{e_buildOptions.BuildNewMenu.ToString(), e_buildOptions.UpdateExistingMenu.ToString() }, 2, _layoutOptions);
                 EditorGUILayout.Space();
             }
             else
             {
-                _buildOptionsIndex = 0;
+                _buildOption = e_buildOptions.BuildNewMenu;
                 _menuUpdateOption = null;
                 _menusInScene = new List<RadialMenu>();
             }
 
-            if(_buildOptionsIndex == 1)
+            if(_buildOption == e_buildOptions.UpdateExistingMenu)
             {
                 _menuUpdateOptions = new string[_menusInScene.Count];
                 for(var i = 0; i < _menuUpdateOptions.Length; i++)
@@ -178,7 +157,7 @@ namespace VRMM {
             GUILine();
 
             //Loading content needed to make menu
-            _buttonPrefabs = Resources.LoadAll<GameObject>("ButtonPrefabs/" + _buttonStyleOptions[_buttonStyleIndex]);
+            _buttonPrefabs = Resources.LoadAll<GameObject>("ButtonPrefabs/" + _buttonStyle);
             _radialMenuPrefab = Resources.Load<GameObject>("MenuPrefabs/RadialMenu");
             _defaultClickSound = Resources.Load<AudioClip>("Sound/DefaultButtonPress");
 
@@ -189,17 +168,19 @@ namespace VRMM {
 
             // General Button Options
             EditorGUILayout.LabelField("General Button Options", _headerStyle);
-            if(_buildOptionsIndex == 0)
+            if(_buildOption == e_buildOptions.BuildNewMenu)
             {
                 _menuName = EditorGUILayout.TextField("Menu Name", _menuName, _layoutOptions);
             }
-            _buttonStyleIndex = EditorGUILayout.Popup("Button Style", _buttonStyleIndex, _buttonStyleOptions, _layoutOptions);
+            
+            _buttonStyle = (e_buttonStyles)EditorGUILayout.EnumPopup("Button Style", _buttonStyle, _layoutOptions);
             _numberOfButtons = EditorGUILayout.IntSlider("Number of Buttons", _numberOfButtons, 2, 8, _layoutOptions);
 
             GUILine();
 
             EditorGUILayout.LabelField("Label Options", _headerStyle);
-            _labelDisplayIndex = EditorGUILayout.Popup("Button Label Mode", _labelDisplayIndex, _labelDisplayOptions, _layoutOptions);
+            // _labelDisplayIndex = EditorGUILayout.Popup("Button Label Mode", _labelDisplayIndex, _labelDisplayOptions, _layoutOptions);
+            _labelDisplay = (e_labelDisplay)EditorGUILayout.EnumPopup("Button Label Mode", _labelDisplay, _layoutOptions);
             _labelFont = EditorGUILayout.ObjectField("Label Font", _labelFont, typeof(Font), false, _layoutOptions);
 
             GUILine();
@@ -218,7 +199,8 @@ namespace VRMM {
 
             //Control Options
             EditorGUILayout.LabelField("Control Options", _headerStyle);
-            _selectionButtonIndex = EditorGUILayout.Popup("Confirm Selection Button", _selectionButtonIndex, _selectionButtonOptions, _layoutOptions);
+            // _selectionButtonIndex = EditorGUILayout.Popup("Confirm Selection Button", _selectionButtonIndex, _selectionButtonOptions, _layoutOptions);
+            _selectionButton = (e_selectionButton)EditorGUILayout.EnumPopup("Confirm Selection Button", _selectionButton, _layoutOptions);
 
             GUILine();
 
@@ -231,10 +213,12 @@ namespace VRMM {
                 _onClickSound = EditorGUILayout.ObjectField("Sound on Click", _onClickSound, typeof(AudioClip), true, _layoutOptions);
             }
             _onClickSound = _defaultClickSound;
-            _hapticHandIndex = EditorGUILayout.Popup("Haptics", _hapticHandIndex, _hapticHandOptions, _layoutOptions);
-            if (_hapticHandOptions[_hapticHandIndex] != "No Haptics")
+            // _hapticHandIndex = EditorGUILayout.Popup("Haptics", _hapticHandIndex, _hapticHandOptions, _layoutOptions);
+            _hapticHand = (e_hapticHand)EditorGUILayout.EnumPopup("Haptic Controller", _hapticHand, _layoutOptions);
+            if (_hapticHand != e_hapticHand.NoHaptics)
             {
-                _hapticIntensityIndex = EditorGUILayout.Popup("Haptic Intensity", _hapticIntensityIndex, _hapticIntensityOptions, _layoutOptions);
+                // _hapticIntensityIndex = EditorGUILayout.Popup("Haptic Intensity", _hapticIntensityIndex, _hapticIntensityOptions, _layoutOptions);
+                _hapticIntensity = (e_hapticIntensity)EditorGUILayout.EnumPopup("Haptic Intensity", _hapticIntensity, _layoutOptions);
             }
 
             GUILine();
@@ -267,7 +251,7 @@ namespace VRMM {
             GUILayout.EndScrollView();
 
             //Create menu on press of 'Make Menu' button
-            if (_buttonStyleIndex != 0 && _buildOptionsIndex == 0 && GUILayout.Button("Make Menu", _layoutOptions))
+            if (_buttonStyle != e_buttonStyles.ChooseStyle && _buildOption == e_buildOptions.BuildNewMenu && GUILayout.Button("Make Menu", _layoutOptions))
             {
                 try{
                     if(ValidateBuild(_menuName, _menusInScene, out _buttonMats, _numberOfButtons))
@@ -277,14 +261,14 @@ namespace VRMM {
                             _radialMenuPrefab,
                             _buttonHighlightMat,
                             _buttonPrefabs[_numberOfButtons - 2],
-                            _buttonStyleOptions[_buttonStyleIndex],
+                            _buttonStyle,
                             _buttonMats,
                             _numberOfButtons, 
-                            _labelDisplayOptions[_labelDisplayIndex],  
+                            _labelDisplay,  
                             (Font)_labelFont,
-                            _hapticHandOptions[_hapticHandIndex],
-                            _hapticIntensityOptions[_hapticIntensityIndex],
-                            _selectionButtonOptions[_selectionButtonIndex],
+                            _hapticHand,
+                            _hapticIntensity,
+                            _selectionButton,
                             _handAttachPoint,
                             _buttonsMatch,
                             _sharedButtonColor,
@@ -301,7 +285,7 @@ namespace VRMM {
                     Debug.LogError("VRMM: " + e.Message);
                 }
             }
-            else if (_buttonStyleIndex != 0 && _buildOptionsIndex == 1 && GUILayout.Button("Update Menu", _layoutOptions))
+            else if (_buttonStyle != e_buttonStyles.ChooseStyle && _buildOption == e_buildOptions.UpdateExistingMenu && GUILayout.Button("Update Menu", _layoutOptions))
             {
                 try{
                     if(ValidateUpdate(out _buttonMats, _numberOfButtons, _menuName, _menusInScene, _menuUpdateOptionsIndex))
@@ -310,14 +294,14 @@ namespace VRMM {
                             _menusInScene[_menuUpdateOptionsIndex],
                             _buttonHighlightMat,
                             _buttonPrefabs[_numberOfButtons - 2],
-                            _buttonStyleOptions[_buttonStyleIndex],
+                            _buttonStyle,
                             _buttonMats,
                             _numberOfButtons, 
-                            _labelDisplayOptions[_labelDisplayIndex],
+                            _labelDisplay,
                             (Font)_labelFont,  
-                            _hapticHandOptions[_hapticHandIndex],
-                            _hapticIntensityOptions[_hapticIntensityIndex],
-                            _selectionButtonOptions[_selectionButtonIndex],
+                            _hapticHand,
+                            _hapticIntensity,
+                            _selectionButton,
                             _handAttachPoint,
                             _buttonsMatch,
                             _sharedButtonColor,
@@ -334,7 +318,7 @@ namespace VRMM {
                     Debug.LogError("VRMM: " + e.Message);
                 }
             }
-            else if(_buttonStyleIndex == 0 && GUILayout.Button("Make Menu", _layoutOptions))
+            else if(_buttonStyle == e_buttonStyles.ChooseStyle && GUILayout.Button("Make Menu", _layoutOptions))
             {
                 Debug.Log("VRMM: Please select a button style to create your menu!");
             }
@@ -362,9 +346,9 @@ namespace VRMM {
             var menuCursor = menu.GetComponentInChildren<MenuCursor>();
 
             _menuName = menu.name;
-            _buttonStyleIndex = ArrayUtility.IndexOf(_buttonStyleOptions, menu.GetComponent<RadialMenu>().buttonStyle);
+            // _buttonStyleIndex = ArrayUtility.IndexOf(_buttonStyleOptions, menu.GetComponent<RadialMenu>().buttonStyle);
             _numberOfButtons = menuButtons.Length;
-            _labelDisplayIndex = ArrayUtility.IndexOf(_labelDisplayOptions, menuCursor.labelDisplayOption);
+            _labelDisplay = menuCursor.labelDisplayOption;
             for(var i = 0; i < menuButtons.Length; i++)
             {
                 var rendererOne = menuButtons[i].GetComponent<Renderer>();
@@ -385,17 +369,17 @@ namespace VRMM {
             }
             _sharedButtonColor = menuButtons[0].GetComponent<Renderer>().sharedMaterial.color;
             _sharedHighlightColor = menuCursor.highlightMat.color;
-            _selectionButtonIndex = ArrayUtility.IndexOf(_selectionButtonOptions, menuCursor.selectButtonOption);
+            _selectionButton = menuCursor.selectionButton;
             _handAttachPoint = menu.GetComponent<AttachToAnchor>().attachPoint;
             _playSoundOnClick = menuCursor.playSound;
             if(_playSoundOnClick)
             {
                 _onClickSound = menuCursor.clickAudio;
             }
-            _hapticHandIndex = ArrayUtility.IndexOf(_hapticHandOptions, menuCursor.hapticHandOption);
-            if(_hapticHandIndex != 0)
+            _hapticHand = menuCursor.hapticHandOption;
+            if(_hapticHand != e_hapticHand.NoHaptics)
             {
-                _hapticIntensityIndex = ArrayUtility.IndexOf(_hapticIntensityOptions, menuCursor.hapticIntensityOption);
+                _hapticIntensity = menuCursor.hapticIntensityOption;
             }
             _buttonMats = new Material[menuButtons.Length];
             for(var i = 0; i < menuButtons.Length; i++)

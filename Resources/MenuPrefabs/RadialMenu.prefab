@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2111120306320521099}
   - component: {fileID: 1419608096146990777}
   - component: {fileID: 6335360754838249799}
-  - component: {fileID: 5206376123954081149}
+  - component: {fileID: 8460630337420833660}
   m_Layer: 0
   m_Name: RadialMenu
   m_TagString: Untagged
@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c49d1acf39fa2734890ba6bc69c0f1c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonStyle: 
 --- !u!114 &6335360754838249799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,7 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   eventList: []
---- !u!114 &5206376123954081149
+--- !u!114 &8460630337420833660
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -69,10 +70,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 448865086268013944}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 42e8ae6e12ff8e84cad0d6ea62221a98, type: 3}
+  m_Script: {fileID: 11500000, guid: 8220b44f70beae14cbef2b1b9d22f717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handAttachPoint: {fileID: 0}
+  attachPoint: {fileID: 0}
 --- !u!1 &4542227176877307528
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,9 +123,10 @@ MonoBehaviour:
   labelDisplayOption: 
   hapticHandOption: 
   hapticIntensityOption: 
-  selectButton: 
+  selectButtonOption: 
   highlightMat: {fileID: 0}
   playSound: 0
+  clickAudio: {fileID: 0}
   playHaptics: 0
 --- !u!135 &4252353017262632157
 SphereCollider:
