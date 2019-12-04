@@ -35,6 +35,18 @@ namespace VRMM {
         XButtonOculusOnly,
         YButtonOculusOnly
     }
+    public enum e_toggleButton {
+        LeftThumbAxis,
+        RightThumbAxis,
+        LeftTrigger,
+        RightTrigger,
+        LeftThumbPress,
+        RightThumbPress,
+        AButtonOculusOnly,
+        BButtonOculusOnly,
+        XButtonOculusOnly,
+        YButtonOculusOnly
+    }
     public enum e_hapticHand {
         NoHaptics,
         LeftController,

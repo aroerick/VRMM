@@ -58,6 +58,8 @@ namespace VRMM {
 
         // Control Options
         private e_selectionButton _selectionButton;
+        private bool _menuToggle = false;
+        private e_toggleButton _menuToggleButton;
 
         // Misc Options
         private UnityObject _handAttachPoint;
@@ -211,6 +213,11 @@ namespace VRMM {
             //Control Options
             EditorGUILayout.LabelField("Control Options", _headerStyle);
             _selectionButton = (e_selectionButton)EditorGUILayout.EnumPopup("Confirm Selection Button", _selectionButton, _layoutOptions);
+            _menuToggle = EditorGUILayout.Toggle("Menu Visibility Toggle", _menuToggle);
+            if(_menuToggle)
+            {
+                _menuToggleButton = (e_toggleButton)EditorGUILayout.EnumPopup("Menu Toggle Button", _menuToggleButton, _layoutOptions);
+            }
 
             GUILine();
 
@@ -259,7 +266,11 @@ namespace VRMM {
             GUILayout.EndScrollView();
 
             //Create menu on press of 'Make Menu' button
-            if (_buttonStyle != e_buttonStyles.ChooseStyle && _buildOption == e_buildOptions.BuildNewMenu && GUILayout.Button("Make Menu", _layoutOptions))
+            if (
+                _buttonStyle != e_buttonStyles.ChooseStyle && 
+                _selectionButton.ToString() != _menuToggleButton.ToString() &&
+                _buildOption == e_buildOptions.BuildNewMenu && 
+                GUILayout.Button("Make Menu", _layoutOptions))
             {
                 try{
                     if(ValidateBuild(_menuName, _menusInScene, out _buttonMats, _numberOfButtons))
@@ -284,7 +295,9 @@ namespace VRMM {
                             _buttonLabels,
                             _buttonIcons,
                             _playSoundOnClick,
-                            _onClickSound
+                            _onClickSound,
+                            _menuToggle,
+                            _menuToggleButton
                         );
                     }
                 }
@@ -293,7 +306,10 @@ namespace VRMM {
                     Debug.LogError("VRMM: " + e.Message);
                 }
             }
-            else if (_buildOption == e_buildOptions.UpdateExistingMenu && GUILayout.Button("Update Menu", _layoutOptions))
+            else if (
+                _buildOption == e_buildOptions.UpdateExistingMenu &&
+                _selectionButton.ToString() != _menuToggleButton.ToString() &&
+                GUILayout.Button("Update Menu", _layoutOptions))
             {
                 try{
                     if(ValidateUpdate(out _buttonMats, _numberOfButtons, _menusInScene, _menuUpdateOptionsIndex))
@@ -317,7 +333,9 @@ namespace VRMM {
                             _buttonLabels,
                             _buttonIcons,
                             _playSoundOnClick,
-                            _onClickSound
+                            _onClickSound,
+                            _menuToggle,
+                            _menuToggleButton
                         );
                     }
                 }
@@ -326,9 +344,21 @@ namespace VRMM {
                     Debug.LogError("VRMM: " + e.Message);
                 }
             }
-            else if(_buttonStyle == e_buttonStyles.ChooseStyle && _buildOption != e_buildOptions.UpdateExistingMenu && GUILayout.Button("Make Menu", _layoutOptions))
+            else if(
+                _buttonStyle == e_buttonStyles.ChooseStyle && 
+                _selectionButton.ToString() != _menuToggleButton.ToString() && 
+                _buildOption != e_buildOptions.UpdateExistingMenu && 
+                GUILayout.Button("Make Menu", _layoutOptions))
             {
-                Debug.Log("VRMM: Please select a button style to create your menu!");
+                Debug.LogWarning("VRMM: Please select a button style to create your menu!");
+            }
+            else if(
+                _menuToggle && 
+                _selectionButton.ToString() == _menuToggleButton.ToString() && 
+                _buildOption != e_buildOptions.UpdateExistingMenu && 
+                GUILayout.Button("Make Menu", _layoutOptions))
+            {
+                Debug.LogWarning("VRMM: Please choose different buttons for Confirm Selection and Menu Toggle");
             }
 
             EditorGUILayout.Space();
@@ -352,6 +382,7 @@ namespace VRMM {
         {
             var menuButtons = menu.GetComponentsInChildren<RadialButton>();
             var menuCursor = menu.GetComponentInChildren<MenuCursor>();
+            var menuToggle = menu.GetComponent<MenuToggle>();
 
             _menuName = menu.name;
             _buttonStyle = menu.buttonStyle;
@@ -379,7 +410,11 @@ namespace VRMM {
             }
             _sharedButtonColor = menuButtons[0].GetComponent<Renderer>().sharedMaterial.color;
             _sharedHighlightColor = menuCursor.highlightMat.color;
+
             _selectionButton = menuCursor.selectionButton;
+            _menuToggle = menuToggle.toggle;
+            _menuToggleButton = menuToggle.toggleButton;
+
             _handAttachPoint = menu.GetComponent<AttachToAnchor>().attachPoint;
             _playSoundOnClick = menuCursor.playSound;
             if(_playSoundOnClick)

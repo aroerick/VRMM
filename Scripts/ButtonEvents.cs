@@ -19,13 +19,16 @@ namespace VRMM {
         
         private RadialButton[] buttons;
         
-        // Send the Unity event from eventList to the corresponding button
         private void Start() {
-            buttons = GetComponentsInChildren<RadialButton>();
+            buttons = GetComponentsInChildren<RadialButton>(true);
 
             for(var i = 0; i < buttons.Length; i++){
                 buttons[i].SetOnButtonPress(eventList[i]);
             }
+        }
+
+        // Send the Unity event from eventList to the corresponding button
+        private void Update() {
         }
     }
 }

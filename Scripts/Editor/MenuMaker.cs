@@ -40,13 +40,22 @@ namespace VRMM
             string[] _buttonLabels,
             Object[] _buttonIcons,
             bool _playSoundOnClick,
-            Object _onClickSound
+            Object _onClickSound,
+            bool _menuToggle,
+            e_toggleButton _menuToggleButton
             )
         {
             //Create new menu
             var radialMenuClone = Instantiate(_radialMenuPrefab);
             radialMenuClone.name = _menuName == "" ? "RadialMenu" : _menuName;
             radialMenuClone.GetComponent<RadialMenu>().buttonStyle = _buttonStyle;
+
+            if(_menuToggle)
+            {
+                var menuToggle = radialMenuClone.GetComponent<MenuToggle>();
+                menuToggle.toggle = true;
+                menuToggle.toggleButton = _menuToggleButton;
+            }
 
             //Add Unity Event list of proper length
             var buttonEvents = radialMenuClone.GetComponent<ButtonEvents>();
@@ -177,7 +186,9 @@ namespace VRMM
             string[] _buttonLabels,
             Object[] _buttonIcons,
             bool _playSoundOnClick,
-            Object _onClickSound
+            Object _onClickSound,
+            bool _menuToggle,
+            e_toggleButton _menuToggleButton
             )
         {
             _currentMenu.GetComponent<RadialMenu>().buttonStyle = _buttonStyle;

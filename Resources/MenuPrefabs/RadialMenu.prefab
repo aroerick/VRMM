@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1419608096146990777}
   - component: {fileID: 6335360754838249799}
   - component: {fileID: 8460630337420833660}
+  - component: {fileID: 9200405039759105217}
   m_Layer: 0
   m_Name: RadialMenu
   m_TagString: Untagged
@@ -47,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c49d1acf39fa2734890ba6bc69c0f1c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonStyle: 
+  buttonStyle: 0
 --- !u!114 &6335360754838249799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,6 +75,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attachPoint: {fileID: 0}
+--- !u!114 &9200405039759105217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448865086268013944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e88de3478708394e9115fe2a0deedf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toggle: 0
+  toggleButton: 0
 --- !u!1 &4542227176877307528
 GameObject:
   m_ObjectHideFlags: 0
@@ -120,10 +135,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ee18b6a634be69408001b8a8a87c80f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  labelDisplayOption: 
-  hapticHandOption: 
-  hapticIntensityOption: 
-  selectButtonOption: 
+  labelDisplayOption: 0
+  hapticHandOption: 0
+  hapticIntensityOption: 0
+  selectionButton: 0
   highlightMat: {fileID: 0}
   playSound: 0
   clickAudio: {fileID: 0}

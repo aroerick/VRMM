@@ -13,7 +13,8 @@ namespace VRMM{
    [System.Serializable]
    public class RadialButton : MonoBehaviour
    {
-      [HideInInspector]public UnityEvent onButtonPress;
+      // [HideInInspector]
+      public UnityEvent onButtonPress;
       
       // Takes the unity events passed to it from ButtonEvents and creates events for the button
       public void SetOnButtonPress(UnityEvent value) => onButtonPress = value;
