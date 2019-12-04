@@ -79,15 +79,15 @@ namespace VRMM {
                 var renderer = button.GetComponent<Renderer>();
                 if(renderer != null && buttonMat == null)
                 { 
-                    buttonMat = renderer.material;
+                    buttonMat = renderer.sharedMaterial;
                 }
 
                 if(buttonMat != null)
                 {
-                    renderer.material = highlightMat;
+                    renderer.sharedMaterial = highlightMat;
                 }
                 
-                if(labelDisplayOption == e_labelDisplay.TaggleOnHover)
+                if(labelDisplayOption == e_labelDisplay.ToggleOnHover)
                 {
                     Text buttonText = button.GetComponentInChildren<Text>(true);
 
@@ -134,15 +134,15 @@ namespace VRMM {
 
                 if(renderer != null)
                 {
-                    renderer.material = buttonMat;
+                    renderer.sharedMaterial = buttonMat;
                     
-                    if(renderer.material != highlightMat)
+                    if(renderer.sharedMaterial != highlightMat)
                     {
                         buttonMat = null;
                     }
                 }
 
-                if (labelDisplayOption == e_labelDisplay.TaggleOnHover)
+                if (labelDisplayOption == e_labelDisplay.ToggleOnHover)
                 {
                     Text buttonText = button.GetComponentInChildren<Text>(true);
 

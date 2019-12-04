@@ -42,10 +42,10 @@ namespace VRMM {
 			clipHard = new OVRHapticsClip(clipHard.Samples, clipHard.Samples.Length);
 		}
 
-		// Send haptic impulse
-		public void Vibrate(e_hapticIntensity vibrationForce, e_hapticHand hapticsHand)
+		// Send haptic impulse based on intensity and hand options
+		public void Vibrate(e_hapticIntensity hapticIntensity, e_hapticHand hapticHand)
 		{
-			switch(hapticsHand)
+			switch(hapticHand)
 			{
 					case e_hapticHand.LeftController:
 						channel = OVRHaptics.LeftChannel;
@@ -56,7 +56,7 @@ namespace VRMM {
 					
 			}
 
-			switch (vibrationForce)
+			switch (hapticIntensity)
 			{
 				case e_hapticIntensity.Light:
 					channel.Preempt(clipLight);

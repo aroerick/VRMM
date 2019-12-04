@@ -1,5 +1,10 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿// VR Menu Maker V1.3
+// Created by Adam Roerick
+//
+// VRMM is a tool I've created to help empower content creation for VR
+//
+// Just defining enums for use across Menu Maker
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,12 +17,11 @@ namespace VRMM {
         LowPoly
     }
     public enum e_buildOptions {
-        [Description("Build New Menu")]
         BuildNewMenu,
         UpdateExistingMenu
     }    
     public enum e_labelDisplay {
-        TaggleOnHover,
+        ToggleOnHover,
         AlwaysShow,
         NoLabels
     }

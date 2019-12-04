@@ -26,7 +26,7 @@ namespace VRMM
             Material _buttonHighlightMat,
             GameObject _buttonPrefab,
             e_buttonStyles _buttonStyle,
-            Material[] _buttonDefaultMats,
+            Material[] _buttonMats,
             int _numberOfButtons, 
             e_labelDisplay _labelDisplay,
             Font _labelFont,
@@ -46,7 +46,7 @@ namespace VRMM
             //Create new menu
             var radialMenuClone = Instantiate(_radialMenuPrefab);
             radialMenuClone.name = _menuName == "" ? "RadialMenu" : _menuName;
-            radialMenuClone.GetComponent<RadialMenu>().buttonStyle = _buttonStyle.ToString();
+            radialMenuClone.GetComponent<RadialMenu>().buttonStyle = _buttonStyle;
 
             //Add Unity Event list of proper length
             var buttonEvents = radialMenuClone.GetComponent<ButtonEvents>();
@@ -84,7 +84,7 @@ namespace VRMM
                 var buttonClone = Instantiate(_buttonPrefab, radialMenuClone.GetComponentInChildren<RadialButtonContainer>().transform);
 
                 var renderer = buttonClone.GetComponent<Renderer>();
-                renderer.material = _buttonDefaultMats[i];
+                renderer.material = _buttonMats[i];
                 if (_buttonsMatch)
                 {
                     renderer.sharedMaterial.color = _sharedButtonColor;
@@ -160,10 +160,10 @@ namespace VRMM
 
         public static void UpdateMenu(
             RadialMenu _currentMenu,
-            Material _buttonHighlightMat,
+            Color _highlightColor,
             GameObject _buttonPrefab,
             e_buttonStyles _buttonStyle,
-            Material[] _buttonDefaultMats,
+            Material[] _buttonMats,
             int _numberOfButtons, 
             e_labelDisplay _labelDisplay,
             Font _labelFont,
@@ -180,7 +180,7 @@ namespace VRMM
             Object _onClickSound
             )
         {
-            _currentMenu.GetComponent<RadialMenu>().buttonStyle = _buttonStyle.ToString();
+            _currentMenu.GetComponent<RadialMenu>().buttonStyle = _buttonStyle;
             var currentButtons = _currentMenu.GetComponentsInChildren<RadialButton>();
             for(var i = 0; i < currentButtons.Length; i++)
             {
@@ -217,7 +217,7 @@ namespace VRMM
             }
             cursor.hapticHandOption = _hapticHand;
             cursor.hapticIntensityOption = _hapticIntensity;
-            cursor.highlightMat = _buttonHighlightMat;
+            cursor.highlightMat.color = _highlightColor;
             cursor.selectionButton = _selectionButton;
 
             //Attach menu to specified attach point
@@ -232,7 +232,7 @@ namespace VRMM
                 var buttonClone = Instantiate(_buttonPrefab, _currentMenu.GetComponentInChildren<RadialButtonContainer>().transform);
 
                 var renderer = buttonClone.GetComponent<Renderer>();
-                renderer.material = _buttonDefaultMats[i];
+                renderer.material = _buttonMats[i];
                 if (_buttonsMatch)
                 {
                     renderer.sharedMaterial.color = _sharedButtonColor;

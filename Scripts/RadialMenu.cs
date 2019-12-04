@@ -12,12 +12,10 @@ namespace VRMM {
     public class RadialMenu : MonoBehaviour
     {
         [HideInInspector]
-        public string buttonStyle;
+        public e_buttonStyles buttonStyle;
 
         private float cursorMod = .08f;
-
         private MenuCursor cursor;
-
         private float horizontalInput;
         private float verticalInput;
 
@@ -26,6 +24,7 @@ namespace VRMM {
             cursor = GetComponentInChildren<MenuCursor>();
         }
 
+        // Get input of thumb and map it to the menu cursor
         private void Update()
         {
             horizontalInput = Input.GetAxis("VRMM_Horizontal_Left");

@@ -22,6 +22,7 @@ namespace VRMM{
             }
         }
 
+        // Make this a child of the given attachPoint object
         private void Attach()
         {
             transform.position = Vector3.zero;

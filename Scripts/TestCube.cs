@@ -14,18 +14,27 @@ public class TestCube : MonoBehaviour
     private void Start() {
         _mat = GetComponent<Renderer>().sharedMaterial;
     }
+    // Grow the cube
     public void GrowCube(){
         transform.localScale *= 1.05f;
     }
+
+    // Shrink the cube
     public void ShrinkCube(){
         transform.localScale /= 1.05f;
     }
+
+    // Make the cube red
     public void ColorCube(){
         _mat.color = Color.red;
     }
+
+    // Delete the cube
     public void DeleteCube(){
         Destroy(gameObject);
     }
+
+    // Reset cube color when destroyed
     private void OnDestroy()
     {
         _mat.color = Color.white;

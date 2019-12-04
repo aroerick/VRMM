@@ -19,6 +19,7 @@ namespace VRMM {
         
         private RadialButton[] buttons;
         
+        // Send the Unity event from eventList to the corresponding button
         private void Start() {
             buttons = GetComponentsInChildren<RadialButton>();
 
