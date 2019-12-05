@@ -28,12 +28,12 @@ namespace VRMM {
         private string selectButton;
         private RadialButton[] radialButtons;
         private Material buttonMat = null;
-        private OculusHapticsController hapticsController;
+        private HapticsController hapticsController;
 
         void Start()
         {
             radialButtons = FindObjectsOfType<RadialButton>();
-            hapticsController = GetComponent<OculusHapticsController>();
+            hapticsController = GetComponent<HapticsController>();
             
             if(selectButton == null)
             {

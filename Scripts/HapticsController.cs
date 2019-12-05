@@ -9,13 +9,13 @@ using UnityEngine;
 
 namespace VRMM {
 
-	public class OculusHapticsController : MonoBehaviour
+	public class HapticsController : MonoBehaviour
 	{
 		OVRInput.Controller controllerMask;
 
 		private OVRHapticsClip clipLight;
 		private OVRHapticsClip clipMedium;
-		private OVRHapticsClip clipHard;
+		private OVRHapticsClip clipStrong;
 		private OVRHaptics.OVRHapticsChannel channel;
 
 		private void Start()
@@ -29,17 +29,17 @@ namespace VRMM {
 			int cnt = 10;
 			clipLight = new OVRHapticsClip(cnt);
 			clipMedium = new OVRHapticsClip(cnt);
-			clipHard = new OVRHapticsClip(cnt);
+			clipStrong = new OVRHapticsClip(cnt);
 			for (int i = 0; i < cnt; i++)
 			{
 				clipLight.Samples[i] = i % 2 == 0 ? (byte)0 : (byte)75;
 				clipMedium.Samples[i] = i % 2 == 0 ? (byte)0 : (byte)150;
-				clipHard.Samples[i] = i % 2 == 0 ? (byte)0 : (byte)255;
+				clipStrong.Samples[i] = i % 2 == 0 ? (byte)0 : (byte)255;
 			}
 
 			clipLight = new OVRHapticsClip(clipLight.Samples, clipLight.Samples.Length);
 			clipMedium = new OVRHapticsClip(clipMedium.Samples, clipMedium.Samples.Length);
-			clipHard = new OVRHapticsClip(clipHard.Samples, clipHard.Samples.Length);
+			clipStrong = new OVRHapticsClip(clipStrong.Samples, clipStrong.Samples.Length);
 		}
 
 		// Send haptic impulse based on intensity and hand options
@@ -65,7 +65,7 @@ namespace VRMM {
 					channel.Preempt(clipMedium);
 					break;
 				case e_hapticIntensity.Strong:
-					channel.Preempt(clipHard);
+					channel.Preempt(clipStrong);
 					break;
 			}
 		}
