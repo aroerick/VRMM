@@ -29,6 +29,8 @@ namespace VRMM {
         private RadialButton[] radialButtons;
         private Material buttonMat = null;
         private HapticsController hapticsController;
+        private bool useAxis;
+        private bool axisInUse;
 
         void Start()
         {
@@ -105,20 +107,47 @@ namespace VRMM {
         {
             RadialButton button = other.GetComponentInParent<RadialButton>();
 
-            if(button != null)
-            {
-                clickAudio = button.GetComponent<AudioSource>();
-            }
-
             if (button != null)
             {
-                if (Input.GetButtonDown(selectButton) || Input.GetAxis(selectButton) > 0.5)
+                clickAudio = button.GetComponent<AudioSource>();
+
+                if(selectionButton == e_selectionButton.LeftTrigger || selectionButton == e_selectionButton.RightTrigger)
+                {
+                    useAxis = true;
+                }
+                if (!useAxis && Input.GetButtonDown(selectButton))
                 {
                     button.onButtonPress.Invoke();
                     if(clickAudio != null && playSound)
+                    {
                         clickAudio.Play();
+                    }
                     if(clickAudio != null && playHaptics)
+                    {
                         hapticsController.Vibrate(hapticIntensityOption, hapticHandOption);
+                    }
+                }
+                else if(useAxis && Input.GetAxisRaw(selectButton) > 0.5)
+                {
+                    if(!axisInUse){
+                        axisInUse = true;
+                        button.onButtonPress.Invoke();
+                        if(clickAudio != null && playSound)
+                        {
+                            clickAudio.Play();
+                        }
+                        if(clickAudio != null && playHaptics)
+                        {
+                            hapticsController.Vibrate(hapticIntensityOption, hapticHandOption);
+                        }
+                    }
+                }
+                else if(useAxis && Input.GetAxisRaw(selectButton) == 0)
+                {
+                    if(axisInUse)
+                    {
+                        axisInUse = false;
+                    }
                 }
             }
         }

@@ -148,7 +148,7 @@ namespace VRMM
                 var audioSource = buttonClone.GetComponent<AudioSource>();
                 if (_playSoundOnClick)
                 {
-
+                    cursor.playSound = true;
                     if (_onClickSound != null)
                     {
                         audioSource.clip = _onClickSound as AudioClip;

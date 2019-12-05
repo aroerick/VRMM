@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 7658037672619571846}
   - component: {fileID: 4252353017262632157}
   - component: {fileID: 5899854678512559714}
-  - component: {fileID: 5525750933716190666}
+  - component: {fileID: 7740093446419113842}
   m_Layer: 0
   m_Name: Cursor
   m_TagString: Untagged
@@ -172,7 +172,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &5525750933716190666
+--- !u!114 &7740093446419113842
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -181,7 +181,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4542227176877307528}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9abc8ae0f28afd4c82f7ab3ea33a2c7, type: 3}
+  m_Script: {fileID: 11500000, guid: 56ec3395cb5b8c847a8b44852d9e8d66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &7146647157163355141
