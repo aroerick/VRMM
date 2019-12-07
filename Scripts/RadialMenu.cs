@@ -12,25 +12,25 @@ namespace VRMM {
     public class RadialMenu : MonoBehaviour
     {
         [HideInInspector]
-        public e_buttonStyles buttonStyle;
+        public EButtonStyles buttonStyle;
 
-        private float cursorMod = .08f;
-        private MenuCursor cursor;
-        private float horizontalInput;
-        private float verticalInput;
+        private const float CursorMod = .08f;
+        private MenuCursor _cursor;
+        private float _horizontalInput;
+        private float _verticalInput;
 
         private void Start()
         {
-            cursor = GetComponentInChildren<MenuCursor>();
+            _cursor = GetComponentInChildren<MenuCursor>();
         }
 
         // Get input of thumb and map it to the menu cursor
         private void Update()
         {
-            horizontalInput = Input.GetAxis("VRMM_Horizontal_Left");
-            verticalInput = Input.GetAxis("VRMM_Vertical_Left");
+            _horizontalInput = Input.GetAxis("VRMM_Horizontal_Left");
+            _verticalInput = Input.GetAxis("VRMM_Vertical_Left");
 
-            cursor.transform.localPosition = new Vector3(horizontalInput * cursorMod, 0, verticalInput * cursorMod);
+            _cursor.transform.localPosition = new Vector3(_horizontalInput * CursorMod, 0, _verticalInput * CursorMod);
         }
 }
 }

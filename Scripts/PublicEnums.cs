@@ -5,27 +5,23 @@
 //
 // Just defining enums for use across Menu Maker
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace VRMM {
     
-    public enum e_buttonStyles {
+    public enum EButtonStyles {
         ChooseStyle,
         Standard,
         LowPoly
     }
-    public enum e_buildOptions {
+    public enum EBuildOptions {
         BuildNewMenu,
         UpdateExistingMenu
     }    
-    public enum e_labelDisplay {
+    public enum ELabelDisplay {
         ToggleOnHover,
         AlwaysShow,
         NoLabels
     }
-    public enum e_selectionButton {
+    public enum ESelectionButton {
         LeftTrigger,
         RightTrigger,
         LeftThumbPress,
@@ -35,7 +31,7 @@ namespace VRMM {
         XButtonOculusOnly,
         YButtonOculusOnly
     }
-    public enum e_toggleButton {
+    public enum EToggleButton {
         LeftThumbAxis,
         RightThumbAxis,
         LeftTrigger,
@@ -47,12 +43,12 @@ namespace VRMM {
         XButtonOculusOnly,
         YButtonOculusOnly
     }
-    public enum e_hapticHand {
+    public enum EHapticHand {
         NoHaptics,
         LeftController,
         RightController
     }
-    public enum e_hapticIntensity
+    public enum EHapticIntensity
 	{
 		Light,
 		Medium,

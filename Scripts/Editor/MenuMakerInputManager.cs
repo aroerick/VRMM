@@ -5,16 +5,12 @@
 //
 // This class sets up the needed Unity inputs for the VR menu to function properly
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine;
 
-namespace VRMM {
+namespace VRMM.Editor {
 
     [InitializeOnLoad]
-    class MenuMakerInputManager
+    internal class MenuMakerInputManager
     {   
         //Used to create custom input bindings when loaded
         static MenuMakerInputManager()
@@ -28,37 +24,37 @@ namespace VRMM {
         }
 
         // Class to describe input bindings
-        private class Axis
+        private class InputAxis
         {
-            public string name = String.Empty;
-            public string descriptiveName = String.Empty;
-            public string descriptiveNegativeName = String.Empty;
-            public string negativeButton = String.Empty;
-            public string positiveButton = String.Empty;
-            public string altNegativeButton = String.Empty;
-            public string altPositiveButton = String.Empty;
-            public float gravity = 0.0f;
-            public float dead = 0.001f;
-            public float sensitivity = 1.0f;
-            public bool snap = false;
-            public bool invert = false;
-            public int type = 0;
-            public int axis = 0;
-            public int joyNum = 0;
+            public string Name = string.Empty;
+            public string DescriptiveName = string.Empty;
+            public string DescriptiveNegativeName = string.Empty;
+            public string NegativeButton = string.Empty;
+            public string PositiveButton = string.Empty;
+            public string AltNegativeButton = string.Empty;
+            public string AltPositiveButton = string.Empty;
+            public float Gravity;
+            public float Dead = 0.001f;
+            public float Sensitivity = 1.0f;
+            public bool Snap = false;
+            public bool Invert = false;
+            public int Type;
+            public int Axis;
+            public int JoyNum = 0;
         }
 
         // Create new binding based on input
-        private static void NewInputAxis(Axis axis)
+        private static void NewInputAxis(InputAxis inputAxis)
         {
-            SerializedObject serializedObject = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0]);
-            SerializedProperty axesProperty = serializedObject.FindProperty("m_Axes");
+            var serializedObject = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0]);
+            var axesProperty = serializedObject.FindProperty("m_Axes");
 
-            SerializedProperty axesCopy = axesProperty.Copy();
+            var axesCopy = axesProperty.Copy();
             axesCopy.Next(true);
             axesCopy.Next(true);
             while (axesCopy.Next(false))
             {
-                if (axesCopy.FindPropertyRelative("m_Name").stringValue == axis.name)
+                if (axesCopy.FindPropertyRelative("m_Name").stringValue == inputAxis.Name)
                 {
                     return;
                 }
@@ -67,46 +63,46 @@ namespace VRMM {
             axesProperty.arraySize++;
             serializedObject.ApplyModifiedProperties();
 
-            SerializedProperty axisProperty = axesProperty.GetArrayElementAtIndex(axesProperty.arraySize - 1);
-            axisProperty.FindPropertyRelative("m_Name").stringValue = axis.name;
-            axisProperty.FindPropertyRelative("descriptiveName").stringValue = axis.descriptiveName;
-            axisProperty.FindPropertyRelative("descriptiveNegativeName").stringValue = axis.descriptiveNegativeName;
-            axisProperty.FindPropertyRelative("negativeButton").stringValue = axis.negativeButton;
-            axisProperty.FindPropertyRelative("positiveButton").stringValue = axis.positiveButton;
-            axisProperty.FindPropertyRelative("altNegativeButton").stringValue = axis.altNegativeButton;
-            axisProperty.FindPropertyRelative("altPositiveButton").stringValue = axis.altPositiveButton;
-            axisProperty.FindPropertyRelative("gravity").floatValue = axis.gravity;
-            axisProperty.FindPropertyRelative("dead").floatValue = axis.dead;
-            axisProperty.FindPropertyRelative("sensitivity").floatValue = axis.sensitivity;
-            axisProperty.FindPropertyRelative("snap").boolValue = axis.snap;
-            axisProperty.FindPropertyRelative("invert").boolValue = axis.invert;
-            axisProperty.FindPropertyRelative("type").intValue = axis.type;
-            axisProperty.FindPropertyRelative("axis").intValue = axis.axis;
-            axisProperty.FindPropertyRelative("joyNum").intValue = axis.joyNum;
+            var axisProperty = axesProperty.GetArrayElementAtIndex(axesProperty.arraySize - 1);
+            axisProperty.FindPropertyRelative("m_Name").stringValue = inputAxis.Name;
+            axisProperty.FindPropertyRelative("descriptiveName").stringValue = inputAxis.DescriptiveName;
+            axisProperty.FindPropertyRelative("descriptiveNegativeName").stringValue = inputAxis.DescriptiveNegativeName;
+            axisProperty.FindPropertyRelative("negativeButton").stringValue = inputAxis.NegativeButton;
+            axisProperty.FindPropertyRelative("positiveButton").stringValue = inputAxis.PositiveButton;
+            axisProperty.FindPropertyRelative("altNegativeButton").stringValue = inputAxis.AltNegativeButton;
+            axisProperty.FindPropertyRelative("altPositiveButton").stringValue = inputAxis.AltPositiveButton;
+            axisProperty.FindPropertyRelative("gravity").floatValue = inputAxis.Gravity;
+            axisProperty.FindPropertyRelative("dead").floatValue = inputAxis.Dead;
+            axisProperty.FindPropertyRelative("sensitivity").floatValue = inputAxis.Sensitivity;
+            axisProperty.FindPropertyRelative("snap").boolValue = inputAxis.Snap;
+            axisProperty.FindPropertyRelative("invert").boolValue = inputAxis.Invert;
+            axisProperty.FindPropertyRelative("type").intValue = inputAxis.Type;
+            axisProperty.FindPropertyRelative("inputAxis").intValue = inputAxis.Axis;
+            axisProperty.FindPropertyRelative("joyNum").intValue = inputAxis.JoyNum;
             serializedObject.ApplyModifiedProperties();
         }
 
         // Create all needed input bindings
         private static void AddInputBindings()
         {
-            NewInputAxis(new Axis() { name = "VRMM_Horizontal_Left",    type = 2, dead = 0.1f, axis = 0 });
-            NewInputAxis(new Axis() { name = "VRMM_Vertical_Left",      type = 2, dead = 0.1f, axis = 1 });
-            NewInputAxis(new Axis() { name = "VRMM_Horizontal_Right",   type = 2, dead = 0.1f, axis = 3 });
-            NewInputAxis(new Axis() { name = "VRMM_Vertical_Right",     type = 2, dead = 0.1f, axis = 4 });
-            NewInputAxis(new Axis() { name = "VRMM_Trigger_Left",       type = 2, dead = 0.1f, axis = 8 });
-            NewInputAxis(new Axis() { name = "VRMM_Trigger_Right",      type = 2, dead = 0.1f, axis = 9 });
-            NewInputAxis(new Axis() { name = "VRMM_Grip_Left",          type = 2, dead = 0.1f, axis = 10 });
-            NewInputAxis(new Axis() { name = "VRMM_Grip_Right",         type = 2, dead = 0.1f, axis = 11 });
-            NewInputAxis(new Axis() { name = "VRMM_OculusButton_A",     gravity = 1000, sensitivity = 1000, positiveButton = "joystick button 0" });
-            NewInputAxis(new Axis() { name = "VRMM_OculusButton_B",     gravity = 1000, sensitivity = 1000, positiveButton = "joystick button 1" });
-            NewInputAxis(new Axis() { name = "VRMM_OculusButton_X",     gravity = 1000, sensitivity = 1000, positiveButton = "joystick button 2" });
-            NewInputAxis(new Axis() { name = "VRMM_OculusButton_Y",     gravity = 1000, sensitivity = 1000, positiveButton = "joystick button 3" });
-            NewInputAxis(new Axis() { name = "VRMM_GripPress_Left",     gravity = 1000, sensitivity = 1000, positiveButton = "joystick button 4" });
-            NewInputAxis(new Axis() { name = "VRMM_GripPress_Right",    gravity = 1000, sensitivity = 1000, positiveButton = "joystick button 5" });
-            NewInputAxis(new Axis() { name = "VRMM_ThumbPress_Left",    gravity = 1000, sensitivity = 1000, positiveButton = "joystick button 8" });
-            NewInputAxis(new Axis() { name = "VRMM_ThumbPress_Right",   gravity = 1000, sensitivity = 1000, positiveButton = "joystick button 9" });
-            NewInputAxis(new Axis() { name = "VRMM_TriggerPress_Left",  gravity = 1000, sensitivity = 1000, positiveButton = "joystick button 14" });
-            NewInputAxis(new Axis() { name = "VRMM_TriggerPress_Right", gravity = 1000, sensitivity = 1000, positiveButton = "joystick button 15" });
+            NewInputAxis(new InputAxis() { Name = "VRMM_Horizontal_Left",    Type = 2, Dead = 0.1f, Axis = 0 });
+            NewInputAxis(new InputAxis() { Name = "VRMM_Vertical_Left",      Type = 2, Dead = 0.1f, Axis = 1 });
+            NewInputAxis(new InputAxis() { Name = "VRMM_Horizontal_Right",   Type = 2, Dead = 0.1f, Axis = 3 });
+            NewInputAxis(new InputAxis() { Name = "VRMM_Vertical_Right",     Type = 2, Dead = 0.1f, Axis = 4 });
+            NewInputAxis(new InputAxis() { Name = "VRMM_Trigger_Left",       Type = 2, Dead = 0.1f, Axis = 8 });
+            NewInputAxis(new InputAxis() { Name = "VRMM_Trigger_Right",      Type = 2, Dead = 0.1f, Axis = 9 });
+            NewInputAxis(new InputAxis() { Name = "VRMM_Grip_Left",          Type = 2, Dead = 0.1f, Axis = 10 });
+            NewInputAxis(new InputAxis() { Name = "VRMM_Grip_Right",         Type = 2, Dead = 0.1f, Axis = 11 });
+            NewInputAxis(new InputAxis() { Name = "VRMM_OculusButton_A",     Gravity = 1000, Sensitivity = 1000, PositiveButton = "joystick button 0" });
+            NewInputAxis(new InputAxis() { Name = "VRMM_OculusButton_B",     Gravity = 1000, Sensitivity = 1000, PositiveButton = "joystick button 1" });
+            NewInputAxis(new InputAxis() { Name = "VRMM_OculusButton_X",     Gravity = 1000, Sensitivity = 1000, PositiveButton = "joystick button 2" });
+            NewInputAxis(new InputAxis() { Name = "VRMM_OculusButton_Y",     Gravity = 1000, Sensitivity = 1000, PositiveButton = "joystick button 3" });
+            NewInputAxis(new InputAxis() { Name = "VRMM_GripPress_Left",     Gravity = 1000, Sensitivity = 1000, PositiveButton = "joystick button 4" });
+            NewInputAxis(new InputAxis() { Name = "VRMM_GripPress_Right",    Gravity = 1000, Sensitivity = 1000, PositiveButton = "joystick button 5" });
+            NewInputAxis(new InputAxis() { Name = "VRMM_ThumbPress_Left",    Gravity = 1000, Sensitivity = 1000, PositiveButton = "joystick button 8" });
+            NewInputAxis(new InputAxis() { Name = "VRMM_ThumbPress_Right",   Gravity = 1000, Sensitivity = 1000, PositiveButton = "joystick button 9" });
+            NewInputAxis(new InputAxis() { Name = "VRMM_TriggerPress_Left",  Gravity = 1000, Sensitivity = 1000, PositiveButton = "joystick button 14" });
+            NewInputAxis(new InputAxis() { Name = "VRMM_TriggerPress_Right", Gravity = 1000, Sensitivity = 1000, PositiveButton = "joystick button 15" });
         }
     }
 }

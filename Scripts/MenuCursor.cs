@@ -9,6 +9,7 @@
 // Button hover colors, on click sound and haptics, as well as the triggering of button
 // events are all handled from this script.
 
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,138 +17,128 @@ namespace VRMM {
 
     public class MenuCursor : MonoBehaviour
     {
-        public e_labelDisplay labelDisplayOption;
-        public e_hapticHand hapticHandOption;
-        public e_hapticIntensity hapticIntensityOption;
-        public e_selectionButton selectionButton;
+        public ELabelDisplay labelDisplayOption;
+        public EHapticHand hapticHandOption;
+        public EHapticIntensity hapticIntensityOption;
+        public ESelectionButton selectionButton;
         public Material highlightMat;
         public bool playSound;
         public AudioSource clickAudio;
         public bool playHaptics;
 
-        private string selectButton;
-        private RadialButton[] radialButtons;
-        private Material buttonMat = null;
-        private HapticsController hapticsController;
-        private bool useAxis;
-        private bool axisInUse;
+        private string _selectButton;
+        private Material _buttonMat;
+        private HapticsController _hapticsController;
+        private bool _useAxis;
+        private bool _axisInUse;
 
-        void Start()
+        private void Start()
         {
-            radialButtons = FindObjectsOfType<RadialButton>();
-            hapticsController = GetComponent<HapticsController>();
-            
-            if(selectButton == null)
+            _hapticsController = GetComponent<HapticsController>();
+
+            if (_selectButton != null) return;
+            switch (selectionButton)
             {
-                switch (selectionButton)
-                {
-                    case e_selectionButton.LeftTrigger:
-                        selectButton = "VRMM_Trigger_Left";
-                        break; 
-                    case e_selectionButton.RightTrigger:
-                        selectButton = "VRMM_Trigger_Right";
-                        break;      
-                    case e_selectionButton.LeftThumbPress:
-                        selectButton = "VRMM_ThumbPress_Left";
-                        break;  
-                    case e_selectionButton.RightThumbPress:
-                        selectButton = "VRMM_ThumbPress_Right";
-                        break; 
-                    case e_selectionButton.AButtonOculusOnly:
-                        selectButton = "VRMM_OculusButton_A";
-                        break; 
-                    case e_selectionButton.BButtonOculusOnly:
-                        selectButton = "VRMM_OculusButton_B";
-                        break; 
-                    case e_selectionButton.XButtonOculusOnly:
-                        selectButton = "VRMM_OculusButton_X";
-                        break; 
-                    case e_selectionButton.YButtonOculusOnly:
-                        selectButton = "VRMM_OculusButton_Y";
-                        break;  
-                }
+                case ESelectionButton.LeftTrigger:
+                    _selectButton = "VRMM_Trigger_Left";
+                    break; 
+                case ESelectionButton.RightTrigger:
+                    _selectButton = "VRMM_Trigger_Right";
+                    break;      
+                case ESelectionButton.LeftThumbPress:
+                    _selectButton = "VRMM_ThumbPress_Left";
+                    break;  
+                case ESelectionButton.RightThumbPress:
+                    _selectButton = "VRMM_ThumbPress_Right";
+                    break; 
+                case ESelectionButton.AButtonOculusOnly:
+                    _selectButton = "VRMM_OculusButton_A";
+                    break; 
+                case ESelectionButton.BButtonOculusOnly:
+                    _selectButton = "VRMM_OculusButton_B";
+                    break; 
+                case ESelectionButton.XButtonOculusOnly:
+                    _selectButton = "VRMM_OculusButton_X";
+                    break; 
+                case ESelectionButton.YButtonOculusOnly:
+                    _selectButton = "VRMM_OculusButton_Y";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
         // Update the button material to hover material and toggle label if applicable
         private void OnTriggerEnter(Collider other)
         {
-            buttonMat = null;
+            _buttonMat = null;
 
             var button = other.GetComponentInParent<RadialButton>();
 
-            if (button != null)
+            if (button == null) return;
+            var component = button.GetComponent<Renderer>();
+            if(component != null && _buttonMat == null)
+            { 
+                _buttonMat = component.sharedMaterial;
+            }
+
+            if(_buttonMat != null)
             {
-                var renderer = button.GetComponent<Renderer>();
-                if(renderer != null && buttonMat == null)
-                { 
-                    buttonMat = renderer.sharedMaterial;
-                }
+                component.sharedMaterial = highlightMat;
+            }
 
-                if(buttonMat != null)
-                {
-                    renderer.sharedMaterial = highlightMat;
-                }
-                
-                if(labelDisplayOption == e_labelDisplay.ToggleOnHover)
-                {
-                    Text buttonText = button.GetComponentInChildren<Text>(true);
+            if (labelDisplayOption != ELabelDisplay.ToggleOnHover) return;
+            var buttonText = button.GetComponentInChildren<Text>(true);
 
-                    if (buttonText != null)
-                    {
-                        buttonText.gameObject.SetActive(true);
-                    }
-                }
-
+            if (buttonText != null)
+            {
+                buttonText.gameObject.SetActive(true);
             }
         }
 
         // Handle button press
         private void OnTriggerStay(Collider other)
         {
-            RadialButton button = other.GetComponentInParent<RadialButton>();
+            var button = other.GetComponentInParent<RadialButton>();
 
-            if (button != null)
+            if (button == null) return;
+            clickAudio = button.GetComponent<AudioSource>();
+
+            if(selectionButton == ESelectionButton.LeftTrigger || selectionButton == ESelectionButton.RightTrigger)
             {
-                clickAudio = button.GetComponent<AudioSource>();
-
-                if(selectionButton == e_selectionButton.LeftTrigger || selectionButton == e_selectionButton.RightTrigger)
+                _useAxis = true;
+            }
+            if (!_useAxis && Input.GetButtonDown(_selectButton))
+            {
+                button.onButtonPress.Invoke();
+                if(clickAudio != null && playSound)
                 {
-                    useAxis = true;
+                    clickAudio.Play();
                 }
-                if (!useAxis && Input.GetButtonDown(selectButton))
+                if(clickAudio != null && playHaptics)
                 {
-                    button.onButtonPress.Invoke();
-                    if(clickAudio != null && playSound)
-                    {
-                        clickAudio.Play();
-                    }
-                    if(clickAudio != null && playHaptics)
-                    {
-                        hapticsController.Vibrate(hapticIntensityOption, hapticHandOption);
-                    }
+                    _hapticsController.Vibrate(hapticIntensityOption, hapticHandOption);
                 }
-                else if(useAxis && Input.GetAxisRaw(selectButton) > 0.5)
+            }
+            else if(_useAxis && Input.GetAxisRaw(_selectButton) > 0.5)
+            {
+                if (_axisInUse) return;
+                _axisInUse = true;
+                button.onButtonPress.Invoke();
+                if(clickAudio != null && playSound)
                 {
-                    if(!axisInUse){
-                        axisInUse = true;
-                        button.onButtonPress.Invoke();
-                        if(clickAudio != null && playSound)
-                        {
-                            clickAudio.Play();
-                        }
-                        if(clickAudio != null && playHaptics)
-                        {
-                            hapticsController.Vibrate(hapticIntensityOption, hapticHandOption);
-                        }
-                    }
+                    clickAudio.Play();
                 }
-                else if(useAxis && Input.GetAxisRaw(selectButton) == 0)
+                if(clickAudio != null && playHaptics)
                 {
-                    if(axisInUse)
-                    {
-                        axisInUse = false;
-                    }
+                    _hapticsController.Vibrate(hapticIntensityOption, hapticHandOption);
+                }
+            }
+            else if(_useAxis && Input.GetAxisRaw(_selectButton) == 0)
+            {
+                if(_axisInUse)
+                {
+                    _axisInUse = false;
                 }
             }
         }
@@ -157,30 +148,25 @@ namespace VRMM {
         {
             var button = other.GetComponentInParent<RadialButton>();
 
-            if (button != null)
+            if (button == null) return;
+            var component = button.GetComponent<Renderer>();
+
+            if(component != null)
             {
-                var renderer = button.GetComponent<Renderer>();
-
-                if(renderer != null)
-                {
-                    renderer.sharedMaterial = buttonMat;
+                component.sharedMaterial = _buttonMat;
                     
-                    if(renderer.sharedMaterial != highlightMat)
-                    {
-                        buttonMat = null;
-                    }
-                }
-
-                if (labelDisplayOption == e_labelDisplay.ToggleOnHover)
+                if(component.sharedMaterial != highlightMat)
                 {
-                    Text buttonText = button.GetComponentInChildren<Text>(true);
-
-                    if (buttonText != null)
-                    {
-                        buttonText.gameObject.SetActive(false);
-                    }
+                    _buttonMat = null;
                 }
-                
+            }
+
+            if (labelDisplayOption != ELabelDisplay.ToggleOnHover) return;
+            var buttonText = button.GetComponentInChildren<Text>(true);
+
+            if (buttonText != null)
+            {
+                buttonText.gameObject.SetActive(false);
             }
         }
     }

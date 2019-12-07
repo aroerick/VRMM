@@ -6,7 +6,6 @@
 // This script takes the Unity Events you define on the Radial Menu and passes them
 // down to the appropriate buttons as click events
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -17,18 +16,15 @@ namespace VRMM {
     {
         public List<UnityEvent> eventList;
         
-        private RadialButton[] buttons;
+        private RadialButton[] _buttons;
         
-        private void Start() {
-            buttons = GetComponentsInChildren<RadialButton>(true);
-
-            for(var i = 0; i < buttons.Length; i++){
-                buttons[i].SetOnButtonPress(eventList[i]);
-            }
-        }
-
         // Send the Unity event from eventList to the corresponding button
-        private void Update() {
+        private void Start() {
+            _buttons = GetComponentsInChildren<RadialButton>(true);
+
+            for(var i = 0; i < _buttons.Length; i++){
+                _buttons[i].SetOnButtonPress(eventList[i]);
+            }
         }
     }
 }

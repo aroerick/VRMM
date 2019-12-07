@@ -7,16 +7,16 @@
 
 using UnityEngine;
 
-namespace VRMM{
+namespace VRMM {
 
     public class AttachToAnchor : MonoBehaviour
     {
         public GameObject attachPoint;
-        private bool isAttached;
+        private bool _isAttached;
 
         private void Update()
         {
-            if (!isAttached && attachPoint != null)
+            if (!_isAttached && attachPoint != null)
             {
                 Attach();
             }
@@ -27,7 +27,7 @@ namespace VRMM{
         {
             transform.position = Vector3.zero;
             transform.SetParent(attachPoint.transform, false);
-            isAttached = true;
+            _isAttached = true;
         }
     }
 }
